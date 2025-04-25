@@ -3546,6 +3546,7 @@ def main():
     # Add job queue to check expired keys
     job_queue = application.job_queue
     job_queue.run_repeating(check_expired_keys, interval=3600, first=10)  # Check every hour
+
     application.run_polling()
 
 if __name__ == '__main__':

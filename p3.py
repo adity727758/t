@@ -428,8 +428,7 @@ async def force_join_on(update: Update, context: CallbackContext):
     
     await update.message.reply_text(
         f"✅ Force Join enabled!\n\n"
-        f"Users must join {FORCE_JOIN_CHANNEL} before attacking.\n"
-        f"Key holders can still attack without joining.",
+        f"Users must join {FORCE_JOIN_CHANNEL} before attacking.",
         parse_mode='Markdown'
     )
 
@@ -444,8 +443,7 @@ async def force_join_off(update: Update, context: CallbackContext):
     
     await update.message.reply_text(
         "✅ Force Join disabled!\n\n"
-        "Users now need valid keys for all attacks.\n"
-        "Channel membership no longer grants access.",
+        "Users can attack without joining the channel.",
         parse_mode='Markdown'
     )
 
@@ -1688,7 +1686,6 @@ async def redeem_key_input(update: Update, context: CallbackContext):
 
 async def attack_start(update: Update, context: CallbackContext):
     chat = update.effective_chat
-    user_id = update.effective_user.id
 
     if chat.type == "private":
         if not is_authorized_user(update):
@@ -1713,22 +1710,28 @@ async def attack_start(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
-    # Check if user has a valid key
-    user_has_key = user_id in redeemed_users and (
-        (isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id]['expiration_time'] > time.time()) or
-        (isinstance(redeemed_users[user_id], (int, float)) and redeemed_users[user_id] > time.time())
-    )
-    
-    # Check if bot is open (no key needed)
+    user_id = update.effective_user.id
+
+    # Check force join if enabled
+    if FORCE_JOIN_ENABLED:
+        is_member = await check_channel_membership(user_id, context, FORCE_JOIN_CHANNEL)
+        if not is_member:
+            await update.message.reply_text(
+                f"❌ *You must join {FORCE_JOIN_CHANNEL} before attacking!*\n\n"
+                f"Please join the channel and try again.",
+                parse_mode='Markdown'
+            )
+            return ConversationHandler.END
+
+    # Rest of your existing attack_start code...
     user_has_access = False
     if bot_open:
         user_has_access = True
-    elif user_has_key:
-        user_has_access = True
-    elif FORCE_JOIN_ENABLED:
-        # Only check channel membership if force join is enabled
-        is_member = await check_channel_membership(user_id, context, FORCE_JOIN_CHANNEL)
-        if is_member:
+    elif user_id in redeemed_users:
+        if isinstance(redeemed_users[user_id], dict):
+            if redeemed_users[user_id].get('is_special', False):
+                user_has_access = True
+        elif isinstance(redeemed_users[user_id], (int, float)):
             user_has_access = True
 
     if user_has_access:
@@ -1736,26 +1739,19 @@ async def attack_start(update: Update, context: CallbackContext):
         
         await update.message.reply_text(
             "⚠️ *Enter the attack arguments: <ip> <port> <duration> <threads>*\n\n"
-            f"ℹ️ *Max duration: {max_duration} sec for channel members, {SPECIAL_MAX_DURATION} sec for key holders.*\n\n"
-            f"🔑 *Buy keys from {current_display_name} for extended features*",
+            f"ℹ️ *When bot is open, max duration is {max_duration} sec. For {SPECIAL_MAX_DURATION} sec, you need a key.*\n\n"
+            f"🔑 *Buy keys from {current_display_name}*",
             parse_mode='Markdown'
         )
         return GET_ATTACK_ARGS
     else:
         current_display_name = get_display_name(update.effective_chat.id)
         
-        if FORCE_JOIN_ENABLED:
-            await update.message.reply_text(
-                f"❌ *You must join {FORCE_JOIN_CHANNEL} to attack!*\n\n"
-                f"🔑 *Or buy a key from {current_display_name} for uninterrupted access*",
-                parse_mode='Markdown'
-            )
-        else:
-            await update.message.reply_text(
-                f"❌ *You need a valid key to attack!*\n\n"
-                f"🔑 *Buy keys from {current_display_name}*",
-                parse_mode='Markdown'
-            )
+        await update.message.reply_text(
+            "❌ *You need a valid key to start an attack!*\n\n"
+            f"🔑 *Buy keys from {current_display_name}*",
+            parse_mode='Markdown'
+        )
         return ConversationHandler.END
 
 async def attack_input(update: Update, context: CallbackContext):
@@ -1768,7 +1764,7 @@ async def attack_input(update: Update, context: CallbackContext):
         await update.message.reply_text(
             f"❌ *Invalid input! Please enter <ip> <port> <duration> <threads>*\n\n"
             f"👑 *Bot Owner:* {current_display_name}\n"
-            f"💬 *Need a key? DM:* {current_display_name}",
+            f"💬 *Need a key for 200s? DM:* {current_display_name}",
             parse_mode='Markdown'
         )
         return ConversationHandler.END
@@ -1777,30 +1773,40 @@ async def attack_input(update: Update, context: CallbackContext):
     duration = int(duration)
     threads = int(threads)
 
-    user_id = update.effective_user.id
+    # Check if all VPS are busy
+    busy_vps = [attack['vps_ip'] for attack in running_attacks.values() if 'vps_ip' in attack]
+    available_vps = [vps[0] for vps in VPS_LIST if vps[0] not in busy_vps]
     
-    # Check user's permissions
-    is_member = await check_channel_membership(user_id, context, FORCE_JOIN_CHANNEL)
+    if not available_vps and VPS_LIST:  # If no VPS available but we have VPS configured
+        busy_list = "\n".join(set(busy_vps))  # Get unique VPS IPs
+        await update.message.reply_text(
+            f"❌ *All VPS are currently busy with attacks!*\n\n"
+            f"🚦 *Currently busy VPS:*\n{busy_list}\n\n"
+            f"Please try again later.",
+            parse_mode='Markdown'
+        )
+        return ConversationHandler.END
+
+    user_id = update.effective_user.id
     is_special = False
     
     if user_id in redeemed_users:
         if isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id].get('is_special'):
             is_special = True
-            max_allowed_duration = SPECIAL_MAX_DURATION
-            max_allowed_threads = SPECIAL_MAX_THREADS
-        elif isinstance(redeemed_users[user_id], (int, float)) and redeemed_users[user_id] > time.time():
-            max_allowed_duration = max_duration  # Regular key holders get standard limits
-            max_allowed_threads = MAX_THREADS
-    elif is_member:
-        # Channel members get basic access
-        max_allowed_duration = 120  # 2 minutes for channel members
-        max_allowed_threads = 1000
-    else:
+    
+    if duration > max_duration and not is_special:
+        current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
+        
         await update.message.reply_text(
-            "❌ *Access denied! Join the channel or get a key.*",
+            f"❌ *Attack duration exceeds 120 seconds!*\n"
+            f"🔑 *For 200 seconds attacks, you need a special key.*\n\n"
+            f"👑 *Buy keys from:* {current_display_name}",
             parse_mode='Markdown'
         )
         return ConversationHandler.END
+
+    max_allowed_duration = SPECIAL_MAX_DURATION if is_special else max_duration
+    max_allowed_threads = SPECIAL_MAX_THREADS if is_special else MAX_THREADS
 
     if duration > max_allowed_duration:
         current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
@@ -1822,11 +1828,10 @@ async def attack_input(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
-    # Rest of the attack logic remains the same...
     last_attack_time = time.time()
     
     # Select a random available VPS
-    selected_vps_ip = random.choice([vps[0] for vps in VPS_LIST]) if VPS_LIST else "localhost"
+    selected_vps_ip = random.choice(available_vps) if available_vps else "localhost"
     
     attack_id = f"{ip}:{port}-{time.time()}"
     running_attacks[attack_id] = {
@@ -1848,11 +1853,9 @@ async def attack_input(update: Update, context: CallbackContext):
         f"🧵 *Threads*: {threads}\n"
         f"🌐 *VPS Used*: `{selected_vps_ip}`\n"
         f"👑 *Bot Owner:* {current_display_name}\n\n"
-        f"🔥 *Attack launched successfully!*",
+        f"🔥 *RITIK KI MUMMY CHODNA CHALU HO GY HA! 💥*",
         parse_mode='Markdown'
     )
-
-    # Rest of the attack execution code...
 
     async def run_attack():
         try:
@@ -3546,8 +3549,8 @@ def main():
     # Add job queue to check expired keys
     job_queue = application.job_queue
     job_queue.run_repeating(check_expired_keys, interval=3600, first=10)  # Check every hour
+
     application.run_polling()
 
 if __name__ == '__main__':
     main()
-

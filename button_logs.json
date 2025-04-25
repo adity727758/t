@@ -1,0 +1,31 @@
+{
+  "logs": [
+    {
+      "id": "1b8db1fc-202f-4aab-9d67-dccff758deaa",
+      "timestamp": "2025-04-25T09:17:39.966649",
+      "user_id": 6479495033,
+      "username": "Riyahacksyt",
+      "button_name": "OpenBot",
+      "chat_type": "private",
+      "group_id": null
+    },
+    {
+      "id": "c87cdd50-1501-450c-8cce-0e8e7564c41b",
+      "timestamp": "2025-04-25T09:20:29.853030",
+      "user_id": 6479495033,
+      "username": "Riyahacksyt",
+      "button_name": "\u23f3 Uptime",
+      "chat_type": "supergroup",
+      "group_id": -1002295161013
+    },
+    {
+      "id": "1894f345-552f-4ec6-9750-cfcef31ccb8c",
+      "timestamp": "2025-04-25T09:20:31.971518",
+      "user_id": 6479495033,
+      "username": "Riyahacksyt",
+      "button_name": "\ud83d\udd0d Status",
+      "chat_type": "supergroup",
+      "group_id": -1002295161013
+    }
+  ]
+}
