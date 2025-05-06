@@ -12,7 +12,7 @@ authorized_users = {OWNER_USER_ID}
 
 # Default config for attacks
 default_duration = 60  # seconds
-default_threads = 10   # threads
+default_threads = 1000   # threads
 
 # Track running attacks
 running_attacks = {}
