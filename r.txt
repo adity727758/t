@@ -1,0 +1,160 @@
+    "2H": 10,  # Price for 1-hour key
+    "3H": 15,  # Price for 1-hour key
+    "4H": 20,  # Price for 1-hour key
+    "5H": 25,  # Price for 1-hour key
+    "6H": 30,  # Price for 1-hour key
+    "7H": 35,  # Price for 1-hour key
+    "8H": 40,  # Price for 1-hour key
+    "9H": 45,  # Price for 1-hour key
+    "10H": 50, # Price for 1-hour key
+    "1D": 60,  # Price for 1-day key
+    "2D": 100,  # Price for 1-day key
+    "3D": 160, # Price for 1-day key
+    "5D": 250, # Price for 2-day key
+    "7D": 320, # Price for 2-day key
+    "15D": 700, # Price for 2-day key
+    "30D": 1250, # Price for 2-day key
+    "60D": 2000, # Price for 2-day key,
+
+
+
+
+    "2D": 130,  # 30 days special key price
+    "3D": 250,  # 30 days special key price
+    "4D": 300,  # 30 days special key price
+    "5D": 400,  # 30 days special key price
+    "6D": 500,  # 30 days special key price
+    "7D": 550,  # 30 days special key price
+    "8D": 600,  # 30 days special key price
+    "9D": 750,  # 30 days special key price
+    "10D": 800,  # 30 days special key price
+    "11D": 850,  # 30 days special key price
+    "12D": 900,  # 30 days special key price
+    "13D": 950,  # 30 days special key price
+    "14D": 1000,  # 30 days special key price
+    "15D": 1050,  # 30 days special key price
+    "30D": 1500,  # 30 days special key price
+
+
+
+    {
+        'url': 'https://www.freepik.com/free-ai-image/anime-style-character-with-fire-flames_133535096.htm#fromView=search&page=1&position=22&uuid=b7e402d8-a2d0-4435-96d8-509ca6c88d5a&query=anime+fightt+mc',
+        'caption':(
+            '🔥 Welcome to the Ultimate Service Bot\n\n'
+            '🌐 Multi VPS Attack Support\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
+            '💀 Bot hosting available for both GRP and Privt\n\n'
+            ' JOIN CHANNEL  @RipServerGroup \n\n'
+        )
+    },
+    {
+        'url': 'https://www.freepik.com/free-photo/neon-light-bathroom-sign-night_35555689.htm#fromView=keyword&page=2&position=2&uuid=5a27d860-0336-4b7c-b5c6-e9a09e63723f&query=4k+Wallpaper+Anime',
+        'caption': (
+            '🔥 Welcome to the Ultimate Service Bot\n\n'
+            '🌐 Multi VPS Attack Support\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            '💀 Bot hosting available for both GRP and Privt\n\n'
+            ' JOIN CHANNEL  @RipServerGroup\n\n'
+        )
+    },
+    {
+        'url': 'https://www.freepik.com/free-ai-image/anime-moon-landscape_234119452.htm#fromView=keyword&page=2&position=13&uuid=5a27d860-0336-4b7c-b5c6-e9a09e63723f&query=4k+Wallpaper+Anime',
+        'caption': (
+            '🔥 Welcome to the Ultimate Service Bot\n\n'
+            '🌐 Multi VPS Attack Support\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
+            '💀 Bot hosting available for both GRP and Privt\n\n'
+            ' JOIN CHANNEL  @RipServerGroup \n\n'
+            
+        )
+    },
+    {
+        'url': 'https://www.freepik.com/free-ai-image/anime-style-portrait-traditional-japanese-samurai-character_186699529.htm#fromView=keyword&page=2&position=21&uuid=5a27d860-0336-4b7c-b5c6-e9a09e63723f&query=4k+Wallpaper+Anime',
+        'caption': (
+            '🔥 Welcome to the Ultimate Service Bot\n\n'
+            '🌐 Multi VPS Attack Support\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            '💀 Bot hosting available for both GRP and Privt\n\n'
+            ' JOIN CHANNEL  @RipServerGroup\n\n'
+        )
+    },
+    {
+        'url': 'https://www.freepik.com/premium-ai-image/painting-man-standing-cliff-overlooking-beautiful-sunset-generative-ai_141629614.htm#fromView=keyword&page=2&position=26&uuid=5a27d860-0336-4b7c-b5c6-e9a09e63723f&query=4k+Wallpaper+Anime',
+        'caption': (
+            '🔥 Welcome to the Ultimate Service Bot\n\n'
+            '🌐 Multi VPS Attack Support\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
+            '💀 Bot hosting available for both GRP and Privt\n\n'
+            ' JOIN CHANNEL  @RipServerGroup \n\n'
+        )
+    },
+    {
+        'url': 'https://www.freepik.com/premium-photo/female-hunter-with-bow-battlefield-digital-art-style-illustration-painting_20393898.htm#fromView=keyword&page=2&position=36&uuid=5a27d860-0336-4b7c-b5c6-e9a09e63723f&query=4k+Wallpaper+Anime',
+        'caption': (
+            '🔥 Welcome to the Ultimate Service Bot\n\n'
+            '🌐 Multi VPS Attack Support\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            '💀 Bot hosting available for both GRP and Privt\n\n'
+            ' JOIN CHANNEL  @RipServerGroup\n\n'
+        )
+    },
+    {
+        'url': 'https://www.freepik.com/free-ai-image/long-shot-adult-nature-with-3d-geometric-shapes_59583693.htm#fromView=keyword&page=2&position=47&uuid=5a27d860-0336-4b7c-b5c6-e9a09e63723f&query=4k+Wallpaper+Anime',
+        'caption': (
+            '🔥 Welcome to the Ultimate Service Bot\n\n'
+            '🌐 Multi VPS Attack Support\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            '💀 Bot hosting available for both GRP and Privt\n\n'
+            ' JOIN CHANNEL  @RipServerGroup\n\n'
+        )
+    },
+    {
+        'url': 'https://www.freepik.com/free-ai-image/beautiful-anime-kid-cartoon-scene_94944880.htm#fromView=keyword&page=3&position=33&uuid=5a27d860-0336-4b7c-b5c6-e9a09e63723f&query=4k+Wallpaper+Anime',
+        'caption': (
+            '🔥 Welcome to the Ultimate Service Bot\n\n'
+            '🌐 Multi VPS Attack Support\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            '💀 Bot hosting available for both GRP and Privt\n\n'
+            ' JOIN CHANNEL  @RipServerGroup \n\n'
+        )
+    },
+    {
+        'url': 'https://www.freepik.com/free-ai-image/anime-moon-landscape_234119364.htm#fromView=keyword&page=3&position=35&uuid=5a27d860-0336-4b7c-b5c6-e9a09e63723f&query=4k+Wallpaper+Anime',
+        'caption': (
+            '🔥 Welcome to the Ultimate Service Bot\n\n'
+            '🌐 Multi VPS Attack Support\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            '💀 Bot hosting available for both GRP and Privt\n\n'
+            ' JOIN CHANNEL  @RipServerGroup \n\n'
+        )
+    },
+    {
+        'url': 'https://www.freepik.com/free-ai-image/full-shot-ninja-wearing-equipment_81008309.htm#fromView=keyword&page=4&position=25&uuid=5a27d860-0336-4b7c-b5c6-e9a09e63723f&query=4k+Wallpaper+Anime',
+        'caption': (
+            '🔥 Welcome to the Ultimate Service Bot\n\n'
+            '🌐 Multi VPS Attack Support\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            '💀 Bot hosting available for both GRP and Privt\n\n'
+            ' JOIN CHANNEL  @RipServerGroup\n\n'
+       )
+    },
+    {
+        'url': 'https://www.freepik.com/free-ai-image/anime-japanese-character_196623404.htm#fromView=keyword&page=5&position=3&uuid=5a27d860-0336-4b7c-b5c6-e9a09e63723f&query=4k+Wallpaper+Anime',
+        'caption':(
+            '🔥 Welcome to the Ultimate Service Bot\n\n'
+            '🌐 Multi VPS Attack Support\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            '💀 Bot hosting available for both GRP and Privt\n\n'
+            ' JOIN CHANNEL @RipServerGroup \n\n'
+        )
+    },
+    {
+        'url': 'https://www.freepik.com/free-ai-image/anime-style-portrait-traditional-japanese-samurai-character_186699682.htm#fromView=keyword&page=5&position=22&uuid=5a27d860-0336-4b7c-b5c6-e9a09e63723f&query=4k+Wallpaper+Anime',
+        'caption':(
+            '🔥 Welcome to the Ultimate Service Bot\n\n'
+            '🌐 Multi VPS Attack Support\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
+            '💀 Bot hosting available for both GRP and Privt\n\n'
+            ' JOIN CHANNEL @@RipServerGroup \n\n'
+        )
+    },

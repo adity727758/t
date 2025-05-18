@@ -1,0 +1,67 @@
+{
+  "logs": [
+    {
+      "id": "4ffab95d-1983-42c7-9576-b98f88356d8f",
+      "timestamp": "2025-05-09T13:47:12.291633",
+      "user_id": 6479495033,
+      "username": "Riyahacksyt",
+      "button_name": "OpenBot",
+      "chat_type": "private",
+      "group_id": null
+    },
+    {
+      "id": "a3171967-afa8-464a-8cd6-2eb6fe501daf",
+      "timestamp": "2025-05-09T13:47:52.918567",
+      "user_id": 6479495033,
+      "username": "Riyahacksyt",
+      "button_name": "VPS Status",
+      "chat_type": "private",
+      "group_id": null
+    },
+    {
+      "id": "805853ad-d7df-47bc-8b40-29ed619c34c3",
+      "timestamp": "2025-05-09T13:50:23.314546",
+      "user_id": 6479495033,
+      "username": "Riyahacksyt",
+      "button_name": "VPS Status",
+      "chat_type": "private",
+      "group_id": null
+    },
+    {
+      "id": "4bbcfd64-d8db-482c-8633-bcfd1eca2131",
+      "timestamp": "2025-05-09T14:07:18.937566",
+      "user_id": 6479495033,
+      "username": "Riyahacksyt",
+      "button_name": "Owner Settings",
+      "chat_type": "private",
+      "group_id": null
+    },
+    {
+      "id": "0ba09b35-9d35-49ec-979e-caf794c85ad2",
+      "timestamp": "2025-05-09T14:09:00.830024",
+      "user_id": 6479495033,
+      "username": "Riyahacksyt",
+      "button_name": "Promote",
+      "chat_type": "private",
+      "group_id": null
+    },
+    {
+      "id": "413526b7-140c-4014-bedc-2b65770341c2",
+      "timestamp": "2025-05-09T14:09:55.873250",
+      "user_id": 6479495033,
+      "username": "Riyahacksyt",
+      "button_name": "Back to Home",
+      "chat_type": "private",
+      "group_id": null
+    },
+    {
+      "id": "4e5c9a9c-057c-4ca3-888c-1924f2eb9f78",
+      "timestamp": "2025-05-09T14:10:03.413419",
+      "user_id": 6479495033,
+      "username": "Riyahacksyt",
+      "button_name": "Reset VPS",
+      "chat_type": "private",
+      "group_id": null
+    }
+  ]
+}

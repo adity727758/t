@@ -1998,7 +1998,7 @@ async def attack_input(update: Update, context: CallbackContext):
     # Store message ID for later editing
     context.user_data['attack_msg_id'] = attack_msg.message_id
 
-    # Launch attacks on all selected VPS - pass context as argument
+    # Launch attacks on all selected VPS
     for attack_id in attack_ids:
         vps_ip = attack_id.split('-')[-1]
         asyncio.create_task(run_attack(ip, port, duration, threads, vps_ip, attack_id, update, context))
